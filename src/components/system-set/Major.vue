@@ -37,7 +37,7 @@
                                 <el-input v-model="form.name"></el-input>
                             </el-form-item>
                             <el-form-item label="所属院">
-                                <el-select v-model="form.academyId" remote="true">
+                                <el-select v-model="form.academyId" :remote="true">
                                     <el-option v-for="academy in academys"
                                         :key="academy.id"
                                         :label="academy.name"
@@ -101,6 +101,10 @@ export default {
       }
     },
     async post_major () {
+      if (this.isBlank(this.form)) {
+        this.$message.warning('名称、所属院不能为空！')
+        return
+      }
       const data = await insertMajor(this.form)
       this.dialog_visible = false
       if (data.code === 0) {
@@ -158,7 +162,7 @@ export default {
         loading.close()
       })
     },
-    isBlank(params) {
+    isBlank (params) {
       return (params.name === '') || (params.academyId === '')
     }
   },
