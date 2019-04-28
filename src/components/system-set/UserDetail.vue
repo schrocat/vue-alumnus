@@ -8,20 +8,18 @@
               <tr>
                 <th>编号</th>
                 <th>账号</th>
-                <!-- <th>邮箱</th> -->
                 <th>密码</th>
                 <th>学院</th>
                 <th>系</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="d in ds" :key="d.no">
-                <td>{{d.no}}</td>
-                <td>{{d.mail}}</td>
-                <!-- <td>{{d.mail}}</td> -->
-                <td>{{d.pass}}</td>
-                <td>{{d.acdamy}}</td>
-                <td>{{d.major}}</td>
+              <tr v-for="(user,index) in users" :key="user.id">
+                <td>{{index}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.password}}</td>
+                <td>{{user.academy}}</td>
+                <td>{{user.major}}</td>
                 <td>
                   <div class="pull-right">
                     <button type="button" class="btn btn-default btn-sm" @click="dialogFormVisible = true">
@@ -43,20 +41,27 @@
               <el-form-item label="账号" label-width="10%">
                 <el-input v-model="form.username"></el-input>
               </el-form-item>
-              <el-form-item label="邮箱" label-width="10%">
-                <el-input v-model="form.email"></el-input>
-              </el-form-item>
               <el-form-item label="密码" label-width="10%">
                 <el-input v-model="form.password"></el-input>
               </el-form-item>
+              <el-form-item label="确认密码" label-width="10%">
+                <el-input v-model="surePwd"></el-input>
+              </el-form-item>
               <el-form-item label="学院" label-width="10%">
-                <el-select v-model="form.academy">
-                <el-option label="工学院"></el-option>
+                <el-select v-model="form.academy" :remote="true">
+                  <el-option v-for="academy in academies"
+                    :key="academy.id"
+                    :value="academy.id"
+                    :label="academy.name">
+                  </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="系" label-width="10%">
-                <el-select v-model="form.major">
-                  <el-option label="计算机科学与技术">
+                <el-select v-model="form.major" :remote="true">
+                  <el-option v-for="major in majors"
+                    :key="major.id"
+                    :value="major.id"
+                    :label="major.name">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -67,31 +72,56 @@
             </span>
           </el-dialog>
         </div>
-        <!-- /.body -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getAdmins, getMajors, getAcademies } from '@/api'
 export default {
   name: 'UserDetail',
   props: ['message'],
   data () {
     return {
-      ds: [
-        {no: '1',  pass: '***', mail: '111@qq.com', acdamy: 'en', major: 'cs'},
-        {no: '2',  pass: '****', mail: '111@qq.com', acdamy: 'en', major: 'cs'}
-      ],
+      users:[],
       dialogFormVisible: false,
       form: {
-        username: 'hhh',
+        username: '',
         email: '',
         password: '',
         academy: '',
         major: ''
+      },
+      surePwd: '',
+      academies: [],
+      majors: []
+    }
+  },
+  methods: {
+    async get_majors () {
+      const data = await getMajors()
+      if (data.code === 0) {
+        this.majors = data.data
+      }
+    },
+    async get_academies () {
+      const data = await getAcademies()
+      if (data.code === 0) {
+        this.academies = data.data
+      }
+    },
+    async get_admins () {
+      const data = await getAdmins()
+      if (data.code === 0) {
+        this.users = data.data
       }
     }
+  },
+  mounted () {
+    this.get_admins()
+    this.get_majors()
+    this.get_academies()
   }
 }
 </script>

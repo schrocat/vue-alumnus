@@ -20,7 +20,7 @@ import bdm from 'vue-baidu-map'
 import vchart from 'v-charts'
 import Key from './js/Key'
 import { setCookie } from '@/utils'
-import { getLoginStatus } from '@/api'
+import { getLoginStatus, getUserInfo } from '@/api'
 
 Vue.use(ElementUI)
 Vue.use(bdm, {
@@ -37,28 +37,28 @@ Vue.config.productionTip = false
 // localStorage keys
 Vue.prototype.key = Key
 
-router.beforeEach(async (to, from, next) => {
-  if (to.query.auth_token) {
-    setCookie('auth_token',to.query.auth_token)
-    const data = await getLoginStatus()
-    console.log(data)
-    if (data.code === 0) {
-      localStorage.setItem('isLogin', true)
-      store.commit('loginStatus', true)
-      const route = {...to, replace: true}
-      delete route.query.auth_token
-      next(route)
-    } else {
-      window.location.href = "http://stuer.ericwu.cn/sso"
-    }
-  }
-  const isLogin = localStorage.getItem('isLogin')
-  if (isLogin) {
-    if (!store.getters.user) {
-      // const result = await getUserInfo
-    }
-  }
-})
+// router.beforeEach(async (to, from, next) => {
+//   if (to.query.auth_token) {
+//     setCookie('auth_token',to.query.auth_token)
+//     const data = await getLoginStatus()
+//     console.log(data)
+//     if (data.code === 0) {
+//       localStorage.setItem('isLogin', true)
+//       store.commit('loginStatus', true)
+//       const route = {...to, replace: true}
+//       delete route.query.auth_token
+//       next(route)
+//     } else {
+//       window.location.href = "http://stuer.ericwu.cn/sso"
+//     }
+//   }
+//   const isLogin = localStorage.getItem('isLogin')
+//   if (isLogin) {
+//     if (!store.getters.user) {
+//       // const result = await getUserInfo
+//     }
+//   }
+// })
 /* eslint-disable no-new */
 /* eslint-disable */
 // eslint-disable-next-line
