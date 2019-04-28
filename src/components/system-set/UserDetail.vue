@@ -15,7 +15,7 @@
             </thead>
             <tbody>
               <tr v-for="(user,index) in users" :key="user.id">
-                <td>{{index}}</td>
+                <td>{{index + 1}}</td>
                 <td>{{user.email}}</td>
                 <td>{{user.password}}</td>
                 <td>{{user.academy}}</td>
@@ -116,6 +116,9 @@ export default {
       if (data.code === 0) {
         this.users = data.data
       }
+    },
+    async update_admin () {
+      
     }
   },
   mounted () {
