@@ -22,7 +22,7 @@
                 <td>{{user.major}}</td>
                 <td>
                   <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" @click="edit_info(user)">
+                    <button type="button" class="btn btn-default btn-sm" @click="edit_form(user)">
                       <i class="fa fa-edit"></i>
                     </button>
                     <button type="button" class="btn btn-default btn-sm" @click="openbox(user.id)">
@@ -37,15 +37,15 @@
             title=""
             :visible.sync="dialogFormVisible"
             @close="dialogFormVisible = false">
-            <el-form :model="form">
-              <el-form-item label="账号" label-width="10%">
+            <el-form :model="form" :rules="rules">
+              <el-form-item label="账号" label-width="10%" prop="email">
                 <el-input v-model="form.email"></el-input>
               </el-form-item>
-              <el-form-item label="密码" label-width="10%">
-                <el-input v-model="form.password" type="password"></el-input>
+              <el-form-item label="密码" label-width="10%" prop="password">
+                <el-input v-model="form.password"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码" label-width="10%">
-                <el-input v-model="surePwd" type="password"></el-input>
+              <el-form-item label="确认密码" label-width="10%" prop="surePwd">
+                <el-input v-model="form.surePwd" ></el-input>
               </el-form-item>
               <el-form-item label="学院" label-width="10%">
                 <el-select v-model="form.academyId" :remote="true">
@@ -67,13 +67,14 @@
               </el-form-item>
             </el-form>
             <span slot="footer">
-              <el-button @click="dialogFormVisible = false,form = {}">取 消</el-button>
+              <el-button @click="dialogFormVisible = false,clear_form">取 消</el-button>
               <el-button type="primary" @click="update_admin" v-if="isEdit">修改</el-button>
               <el-button type="primary" @click="insert_admin" v-else>确定</el-button>
             </span>
           </el-dialog>
         </div>
         <div class="box-footer">
+          <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" @click="refresh()"></el-button>
           <el-button type="primary" @click="dialogFormVisible = true;isEdit = false;" plain class="pull-right" size="mini">新增管理员</el-button>
         </div>
       </div>
@@ -87,6 +88,13 @@ export default {
   name: 'UserDetail',
   props: ['message'],
   data () {
+    var validatePwd = (rule, value, callback) => {
+      if (value !== this.form.password) {
+        callback(new Error('密码不一致'))
+      } else {
+        callback()
+      }
+    }
     return {
       users: [],
       dialogFormVisible: false,
@@ -100,15 +108,64 @@ export default {
       academies: [],
       majors: [],
       isEdit: false,
-      editId: ''
+      editId: '',
+      rules: {
+        email: [{
+          required: true,
+          message: '请输入邮箱',
+          trigger: 'blur'
+        }, {
+          type: 'email',
+          message: '请输入正确的邮箱地址',
+          trigger: ['blur', 'change']
+        }],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }, {
+          min: 6,
+          max: 20,
+          message: '密码长度为6~20',
+          trigger: 'blur'
+        }],
+        surePwd: [{
+          required: true,
+          message: '请重新输入密码',
+          trigger: 'blur'
+        }, {
+          validator: validatePwd,
+          trigger: 'change',
+        }],
+        academyId: {
+          required: true,
+          message: '请选择学院',
+          trigger: 'blur',
+        },
+        majorId: {
+          required: true,
+          type: 'number',
+          trigger: 'blur',
+        }
+      }
     }
   },
   methods: {
-    edit_info (params) {
-      this.dialogFormVisible = true
-      this.isEdit = true
-      this.editId = params.id
+    clear_form () {
+      this.form.email = ''
+      this.form.password = ''
+      this.form.surePwd = ''
+      this.form.academyId = ''
+      this.form.majorId = ''
+      this.surePwd = ''
+    },
+    edit_form (params) {
       this.form.email = params.email
+      this.form.academyId = params.academyId
+      this.form.majorId = params.majorId
+      this.dialogFormVisible = true
+      this.editId = params.id
+      this.isEdit = true
     },
     async get_majors () {
       const data = await getMajors()
@@ -129,19 +186,6 @@ export default {
       }
     },
     async update_admin () {
-      var tmp = {}
-      if (this.form.email !== '') {
-        tmp.email = this.form.email
-      }
-      if (this.form.password !== '') {
-        tmp.password = this.form.password
-      }
-      if (this.form.academyId !== '') {
-        tmp.academyId = this.form.academyId
-      }
-      if (this.form.majorId !== '') {
-        tmp.majorId = this.form.majorId
-      }
       this.dialogFormVisible = false
       const data = await updateAdmin(this.editId, tmp)
       if (data.code === 0) {
@@ -149,8 +193,7 @@ export default {
       } else {
         this.$message.warning(`修改失败：${data.msg}`)
       }
-      this.form = {}
-      this.surePwd = ''
+      this.clear_form()
       this.get_admins()
     },
     async insert_admin () {
@@ -165,8 +208,7 @@ export default {
       } else {
         this.$message.warning(`新增失败：${data.msg}`)
       }
-      this.form = {}
-      this.surePwd = ''
+      this.clear_form()
       this.get_admins()
     },
     async delete_admin (id) {
@@ -178,18 +220,18 @@ export default {
       }
       this.get_admins()
     },
+    async refresh () {
+      const data = await getAdmins()
+      if(data.code === 0) {
+        this.users = data.data
+        this.$message.success('刷新成功')
+      }
+    },
     openbox (id) {
       this.$confirm('确定删除？', '提示')
         .then(() => {
           this.delete_admin(id)
         })
-    },
-    isBlank (param) {
-      return param === ''
-    },
-    hasOneBlank (params) {
-      return this.isBlank(params.email) || this.isBlank(params.password) ||
-        this.isBlank(params.academyId) || this.isBlank(params.majorId)
     }
   },
   mounted () {
