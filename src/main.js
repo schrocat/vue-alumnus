@@ -38,6 +38,7 @@ Vue.config.productionTip = false
 Vue.prototype.key = Key
 
 // router.beforeEach(async (to, from, next) => {
+//   console.log(to.query.auth_token)
 //   if (to.query.auth_token) {
 //     setCookie('auth_token',to.query.auth_token)
 //     const data = await getLoginStatus()
@@ -53,9 +54,36 @@ Vue.prototype.key = Key
 //     }
 //   }
 //   const isLogin = localStorage.getItem('isLogin')
+//   console.log(isLogin)
 //   if (isLogin) {
 //     if (!store.getters.user) {
-//       // const result = await getUserInfo
+//       const result = await getUserInfo()
+//       if (result.code === 0) {
+//         store.commit('setUser', result.data)
+//         store.commit('loginStatus', true)
+//       } else {
+//         localStorage.removeItem('isLogin');
+//         store.commit('setUser', null)
+//         store.commit('loginStatus', false);
+//         window.location.href = '/'
+//       }
+//     }
+//     next()
+//   } else {
+//     const data = await getLoginStatus()
+//     if (data.code === 0) {
+//       localStorage.setItem('isLogin', true)
+//       store.commit('loginStatus',true)
+//       if (!store.getters.user) {
+//         const rs = await getUserInfo()
+//         if(rs.code === 0) {
+//           store.commit('setUser',rs.data)
+//         }
+//       }
+//       next()
+//     } else {
+//       const nhref = window.location.href
+//       window.location.href = `http://stuer.ericwu.cn/sso?redirect=${nhref}`
 //     }
 //   }
 // })

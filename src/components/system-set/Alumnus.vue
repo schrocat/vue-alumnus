@@ -3,18 +3,18 @@
     <div class="col-xs-12">
         <div class="box">
             <div class="box-header">
-                <el-select v-model="academy" placeholder="学院">
-                  <el-option v-for="item in deps"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
+                <el-select v-model="search.academyId" placeholder="学院" :remote="true">
+                  <el-option v-for="academy in academies"
+                    :key="academy.id"
+                    :label="academy.name"
+                    :value="academy.id">
                   </el-option>
                 </el-select>
-                <el-select v-model="major" placeholder="系">
-                  <el-option v-for="item in deps"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
+                <el-select v-model="search.majorId" placeholder="系" :remote="true">
+                  <el-option v-for="major in majors"
+                    :key="major.id"
+                    :label="major.name"
+                    :value="major.id">
                   </el-option>
                 </el-select>
             </div>
@@ -24,20 +24,18 @@
                     <tr>
                         <th>编号</th>
                         <th>账号</th>
-                        <!-- <th>邮箱</th> -->
                         <th>密码</th>
                         <th>学院</th>
                         <th>系</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="d in ds" :key="d.no">
-                        <td>{{d.no}}</td>
-                        <!-- <td>{{d.username}}</td> -->
-                        <td>{{d.mail}}</td>
-                        <td>{{d.pass}}</td>
-                        <td>{{d.acdamy}}</td>
-                        <td>{{d.major}}</td>
+                    <tr v-for="(student,index) in students" :key="student.id">
+                        <td>{{index+1}}</td>
+                        <td>{{student.email}}</td>
+                        <td>{{student.password}}</td>
+                        <td>{{student.academy}}</td>
+                        <td>{{student.major}}</td>
                         <td>
                         <div class="pull-right">
                             <button type="button" class="btn btn-default btn-sm" @click="dialogFormVisible = true">
@@ -52,27 +50,33 @@
                     </tbody>
                 </table>
                 <el-dialog
-                  title="修改用户信息"
                   :visible.sync="dialogFormVisible"
                   @close="dialogFormVisible = false">
                   <el-form :model="form">
                     <el-form-item label="账号" label-width="10%">
-                      <el-input v-model="form.username"></el-input>
-                    </el-form-item>
-                    <el-form-item label="邮箱" label-width="10%">
                       <el-input v-model="form.email"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" label-width="10%">
-                      <el-input v-model="form.password"></el-input>
+                      <el-input v-model="form.password" type="password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" label-width="10%">
+                      <el-input v-model="surePwd" type="password"></el-input>
                     </el-form-item>
                     <el-form-item label="学院" label-width="10%">
-                      <el-select v-model="form.academy">
-                      <el-option label="工学院"></el-option>
+                      <el-select v-model="form.academyId" :remote="true">
+                        <el-option v-for="academy in academies"
+                          :key="academy.id"
+                          :value="academy.id"
+                          :label="academy.name">
+                        </el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="系" label-width="10%">
-                      <el-select v-model="form.major">
-                        <el-option label="计算机科学与技术">
+                      <el-select v-model="form.majorId" :remote="true">
+                        <el-option v-for="major in majors"
+                          :key="major.id"
+                          :label="major.name"
+                          :value="major.id">
                         </el-option>
                       </el-select>
                     </el-form-item>
@@ -83,36 +87,59 @@
                   </span>
                 </el-dialog>
             </div>
-        <!-- /.body -->
         </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getMajors, getAcademies, getStudents } from '@/api'
 export default {
   name: 'Alumnus',
   data () {
     return {
-      ds: [
-        {no: '1', username: 'six', pass: 'sxi', mail: '1595336246@qq.com', acdamy: 'en', major: 'cs'},
-        {no: '2', username: 'sixs', pass: 'sxi', mail: '111Alu@qq.com', acdamy: 'en', major: 'cs'}
-      ],
-      deps: [
-        {id: '2', name: 'wen666666'},
-        {id: '3', name: 'len'}
-      ],
-      academy: '',
-      major: '',
+      students: [],
+      academies: [],
+      majors: [],
+      search: {
+        academyId: '',
+        majorId: '',
+        role: ''
+      },
       dialogFormVisible: false,
       form: {
-        username: 'hhh',
         email: '',
         password: '',
-        academy: '',
-        major: ''
+        academyId: '',
+        majorId: ''
+      },
+      surePwd:''
+    }
+  },
+  methods: {
+    async get_majors () {
+      const data = await getMajors()
+      if (data.code === 0) {
+        this.majors = data.data
+      }
+    },
+    async get_academies () {
+      const data = await getAcademies()
+      if (data.code === 0) {
+        this.academies = data.data
+      }
+    },
+    async get_students () {
+      const data = await getStudents()
+      if (data.code === 0) {
+        this.students = data.data
       }
     }
+  },
+  mounted () {
+    this.get_majors()
+    this.get_academies()
+    this.get_students()
   }
 }
 </script>
