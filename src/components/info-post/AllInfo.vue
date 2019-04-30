@@ -29,7 +29,7 @@
                 <td width="72px">{{ messageType(message.type) }}</td>
                 <td width="96px">
                   <a @click="rowclick(message.id)">详情</a>
-                  <a>修改</a>
+                  <a @click="edit_info(message.id)">修改</a>
                   <a><i class="el-icon-delete" @click="deleteInfo(message.id)"></i></a>
                 </td>
               </tr>
@@ -144,6 +144,10 @@ export default {
     },
     rowclick (id) {
       var r = '/index/post/showInfo/' + id
+      this.$router.push(r)
+    },
+    edit_info (id) {
+      var r = '/index/post/editInfo/' + id
       this.$router.push(r)
     },
     // checkbox的全选功能实现函数
