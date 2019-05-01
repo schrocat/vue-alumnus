@@ -41,7 +41,10 @@
           <div class="block pull-right">
             <el-pagination
               layout="prev, pager, next"
-              :total="total" background>
+              :total="total" background
+              @next-click="pagination"
+              @prev-click="pagination"
+              @current-change="pagination">
             </el-pagination>
           </div>
         </div>
@@ -51,7 +54,6 @@
 import { getOas, deleteOa } from '@/api'
 import { htmlToString } from '@/utils'
 import { Loading } from 'element-ui'
-// import { get } from 'http';
 export default {
   name: 'AllInfo',
   data () {
@@ -61,15 +63,17 @@ export default {
       isCheckAll: false,
       checkedIds: [],
       isall: true,
-      theader: ['', '发布账号', '信息标题', '信息摘要', '信息类型', '操作']
+      theader: ['', '发布账号', '信息标题', '信息摘要', '信息类型', '操作'],
+      offset: 0,
+      pageSize: 10
     }
   },
   methods: {
     async refresh () {
       var loading = Loading.service({text: '刷新中...'})
-      const data = await getOas('all')
+      const data = await getOas('all', this.offset, this.pageSize)
       if (data.code === 0) {
-        this.messages = data.data
+        this.messages = data.data.data
         this.$nextTick(() => {
           loading.close()
         })
@@ -83,10 +87,10 @@ export default {
     },
     // 获取所有信息列表
     getAllInfo () {
-      getOas('all')
+      getOas('all', this.offset, this.pageSize)
         .then(res => {
-          this.messages = res.data
-          this.total = this.messages.length
+          this.messages = res.data.data
+          this.total = res.data.total
         })
     },
     // 截取内容再要
@@ -130,15 +134,12 @@ export default {
       }).then(() => {
         for (var i = 0; i < this.checkedIds.length; i++) {
           deleteOa(this.checkedIds[i])
+            .then(() => {
+              this.getAllInfo()
+            })
         }
         this.checkedIds = []
         this.$message.success('删除成功！')
-        getOas('all')
-          .then(res => {
-            if (res.code === 0) {
-              this.messages = res.data
-            }
-          })
       }).catch(() => {
       })
     },
@@ -149,6 +150,10 @@ export default {
     edit_info (id) {
       var r = '/index/post/editInfo/' + id
       this.$router.push(r)
+    },
+    pagination (curPage) {
+      this.offset = (curPage - 1) * this.pageSize
+      this.getAllInfo()
     },
     // checkbox的全选功能实现函数
     checkAll () {

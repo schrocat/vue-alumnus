@@ -135,17 +135,17 @@ export default {
           trigger: 'blur'
         }, {
           validator: validatePwd,
-          trigger: 'change',
+          trigger: 'change'
         }],
         academyId: {
           required: true,
           message: '请选择学院',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         majorId: {
           required: true,
           type: 'number',
-          trigger: 'blur',
+          trigger: 'blur'
         }
       }
     }
@@ -222,7 +222,7 @@ export default {
     },
     async refresh () {
       const data = await getAdmins()
-      if(data.code === 0) {
+      if (data.code === 0) {
         this.users = data.data
         this.$message.success('刷新成功')
       }

@@ -19,8 +19,8 @@ import axios from 'axios'
 import bdm from 'vue-baidu-map'
 import vchart from 'v-charts'
 import Key from './js/Key'
-import { setCookie } from '@/utils'
-import { getLoginStatus, getUserInfo } from '@/api'
+// import { setCookie } from '@/utils'
+// import { getLoginStatus, getUserInfo } from '@/api'
 
 Vue.use(ElementUI)
 Vue.use(bdm, {

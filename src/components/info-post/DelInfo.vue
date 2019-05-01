@@ -7,9 +7,9 @@
         <div class="mailbox-controls">
           <el-checkbox style="padding: 0px 0px 0px 4px;margin-right:5px;" @change="checkAll()">
           </el-checkbox>
-          <el-button  icon="fa fa-share" size="mini" style="padding:7px;"  :disabled="checkedIds.length<=0"></el-button>
-          <el-button  icon="el-icon-delete" size="mini" style="padding:7px;margin-left:0px;"  :disabled="checkedIds.length<=0"></el-button>
-          <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" ></el-button>
+          <el-button  icon="fa fa-share" size="mini" style="padding:7px;"  :disabled="checkedIds.length<=0" @click="batchReduce()"></el-button>
+          <el-button  icon="el-icon-delete" size="mini" style="padding:7px;margin-left:0px;"  :disabled="checkedIds.length<=0" @click="batchDelete()"></el-button>
+          <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" @click="refresh"></el-button>
         </div>
         <div class="table-responsive mailbox-messages">
           <table class="table table-hover table-striped">
@@ -30,7 +30,7 @@
                 <td width="81px">
                   <a @click="rowclick(message.id)">详情</a>
                   <a><i class="el-icon-delete" @click="deleteInfo(message.id)"></i></a>
-                  <a><i class="fa fa-share"></i></a>
+                  <a><i class="fa fa-share" @click="reduction(message.id)"></i></a>
                 </td>
               </tr>
             </tbody>
@@ -40,15 +40,20 @@
       <div class="box-footer">
           <div class="block pull-right">
             <el-pagination
-              layout="prev, pager, next"
-              :total="total" background>
+              layout="prev, pager,next"
+              :total="total" background
+              @next-click="pagination"
+              @current-change="pagination"
+              @prev-click="pagination">
             </el-pagination>
           </div>
         </div>
     </div>
 </template>
 <script>
-import { getOas } from '@/api'
+import { getOas, fDeleteOa, updateOa } from '@/api'
+// import { constants } from 'fs';
+import { Loading } from 'element-ui'
 export default {
   name: 'DelInfo',
   data () {
@@ -58,18 +63,12 @@ export default {
       isCheckAll: false,
       checkedIds: [],
       isall: true,
-      theader: ['', '发布账号', '信息标题', '信息摘要', '信息类型', '操作']
+      theader: ['', '发布账号', '信息标题', '信息摘要', '信息类型', '操作'],
+      offset: 0,
+      pageSize: 10
     }
   },
   methods: {
-    // 获取信息回收列表
-    getDelInfo () {
-      getOas('del')
-        .then(res => {
-          this.messages = res.data
-          this.total = this.messages.length
-        })
-    },
     // 截取内容再要
     shortcut (str) {
       var dd = str.replace(/<\/?.+?>/g, '')
@@ -88,19 +87,91 @@ export default {
           return '其他'
       }
     },
+    // 获取信息回收列表
+    getDelInfo () {
+      getOas('del', this.offset, this.pageSize)
+        .then(res => {
+          this.messages = res.data.data
+          this.total = res.data.total
+        })
+    },
+    async fDeleteInfo (id) {
+      const data = await fDeleteOa(id)
+      if (data.code === 0) {
+        this.$message.success('永久删除成功')
+      }
+      this.getDelInfo()
+    },
     deleteInfo (id) {
-      this.$confirm('确定删除？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // this.delete_academy(id)
-      }).catch(() => {
-      })
+      this.$confirm('确定永久删除？', '提示')
+        .then(() => {
+          this.fDeleteInfo(id)
+        }).catch(() => {
+        })
+    },
+    async reduceOa (id) {
+      const data = await updateOa(id, {deletedAt: null})
+      if (data.code === 0) {
+        this.$message.success('还原成功')
+      } else {
+        this.$message.warning(`还原失败:${data.msg}`)
+      }
+      this.getDelInfo()
+    },
+    reduction (id) {
+      this.$confirm('确定还原该条信息？', '提示')
+        .then(() => {
+          this.reduceOa(id)
+        })
+    },
+    batchDelete () {
+      this.$confirm('确定删除永久删除这些信息?', '提示')
+        .then(() => {
+          for (var i = 0; i < this.checkedIds.length; i++) {
+            fDeleteOa(this.checkedIds[i])
+              .then(() => {
+                this.getDelInfo()
+              })
+          }
+          this.$message.success('删除成功!')
+        })
+    },
+    batchReduce () {
+      this.$confirm('确定还原这些信息？', '提示')
+        .then(() => {
+          for (var i = 0; i < this.checkedIds.length; i++) {
+            updateOa(this.checkedIds[i], {deletedAt: null})
+              .then(() => {
+                this.getDelInfo()
+              })
+          }
+          this.$message.success('还原成功')
+        })
+    },
+    async refresh () {
+      var loading = Loading.service({text: '刷新中...'})
+      const data = await getOas('del', this.offset, this.pageSize)
+      if (data.code === 0) {
+        this.messages = data.data.data
+        this.$nextTick(() => {
+          loading.close()
+        })
+        this.$message.success('刷新成功')
+      } else {
+        this.$nextTick(() => {
+          loading.close()
+        })
+        this.$message.warning('刷新失败')
+      }
     },
     rowclick (id) {
       var r = '/index/post/showInfo/' + id
       this.$router.push(r)
+    },
+    // 分页
+    pagination (curPage) {
+      this.offset = (curPage - 1) * this.pageSize
+      this.getDelInfo()
     },
     // checkbox的全选功能实现函数
     checkAll () {

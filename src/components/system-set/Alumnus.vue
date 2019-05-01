@@ -90,6 +90,14 @@
                   </span>
                 </el-dialog>
             </div>
+            <div class="box-footer">
+              <div class="block pull-right">
+                <el-pagination
+                  layout="prev, pager, next"
+                  :total="students.length" background>
+                </el-pagination>
+            </div>
+            </div>
         </div>
     </div>
   </div>
@@ -113,6 +121,7 @@ export default {
       majors: [],
       searchp: {},
       dialogFormVisible: false,
+      total: 0,
       form: {
         email: '',
         password: '',
@@ -148,17 +157,17 @@ export default {
           trigger: 'blur'
         }, {
           validator: validatePwd,
-          trigger: 'change',
+          trigger: 'change'
         }],
         academyId: {
           required: true,
           message: '请选择学院',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         majorId: {
           required: true,
           type: 'number',
-          trigger: 'blur',
+          trigger: 'blur'
         }
       }
     }
@@ -195,7 +204,8 @@ export default {
     async get_students () {
       const data = await getStudents(this.searchp)
       if (data.code === 0) {
-        this.students = data.data
+        this.students = data.data.data
+        this.total = data.data.total
       }
     },
     async delete_student (id) {
@@ -239,6 +249,7 @@ export default {
     this.get_majors()
     this.get_academies()
     this.get_students()
+    // this.get_total()
   }
 }
 </script>
