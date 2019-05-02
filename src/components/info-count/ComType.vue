@@ -2,25 +2,39 @@
     <div class="row">
         <div class="col-md-7">
             <div class="box">
+              <div class="box-header">
+                <el-date-picker
+                  v-model="year"
+                  type="year"
+                  placeholder="年份"
+                  class="pull-right"
+                  @change="getWorkProperty"
+                  value-format="yyyy">
+                </el-date-picker>
+              </div>
+              <div class="box-body">
                 <el-table :data="c_data" border stripe style="width:100%;">
-                <el-table-column
-                    type="index"
-                    label="编号"
-                    width="80px">
-                </el-table-column>
-                <el-table-column
-                    prop="type"
-                    label="性质">
-                </el-table-column>
-                <el-table-column
-                    prop="num"
-                    label="人数">
-                </el-table-column>
-                <el-table-column
-                    prop="pol"
-                    label="占比">
-                </el-table-column>
-            </el-table>
+                  <el-table-column
+                      type="index"
+                      label="编号"
+                      width="80px">
+                  </el-table-column>
+                  <el-table-column
+                      prop="property"
+                      label="性质">
+                  </el-table-column>
+                  <el-table-column
+                      prop="count"
+                      label="人数">
+                  </el-table-column>
+                  <el-table-column
+                      label="占比">
+                      <template slot-scope="scope">
+                        {{ratio(c_data[scope.$index].count)}}
+                      </template>
+                  </el-table-column>
+                </el-table>
+              </div>
             </div>
         </div>
         <div class="col-md-5">
@@ -35,6 +49,8 @@
 </template>
 
 <script>
+import { workProperty } from '@/api'
+import { formatFloat } from '@/utils'
 export default {
   data () {
     this.chartSettings = {
@@ -42,38 +58,38 @@ export default {
       offsetY: 225
     }
     return {
-      c_data: [{
-        type: '国企',
-        num: 50,
-        pol: '10%'
-      }, {
-        type: '公私合作',
-        num: 50,
-        pol: '10%'
-      }, {
-        type: '外企',
-        num: 100,
-        pol: '20%'
-      }, {
-        type: '私企',
-        num: 100,
-        pol: '20%'
-      }, {
-        type: '集体企业',
-        num: 200,
-        pol: '40%'
-      }],
+      c_data: [],
+      total: 0,
       chartData: {
-        columns: ['date', 'user'],
-        rows: [
-          {'date': '国企', 'user': 50},
-          {'date': '公私合作', 'user': 50},
-          {'date': '外企', 'user': 100},
-          {'date': '私企', 'user': 100},
-          {'date': '集体企业', 'user': 200}
-        ]
-      }
+        columns: ['property', 'count'],
+        rows: []
+      },
+      year: null
     }
+  },
+  methods: {
+    async getWorkProperty () {
+      const data = await workProperty(this.year)
+      if (data.code === 0) {
+        this.c_data = data.data
+        this.setTotal()
+        this.chartData.rows = data.data
+      }
+    },
+    setTotal () {
+      this.total = 0
+      for (let i = 0; i < this.c_data.length; i++) {
+        this.total += this.c_data[i].count
+      }
+    },
+    ratio (count) {
+      const val = count / this.total * 100
+      const rs = formatFloat(val, 2) + '%'
+      return rs
+    }
+  },
+  mounted () {
+    this.getWorkProperty()
   }
 }
 </script>
