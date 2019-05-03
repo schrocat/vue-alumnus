@@ -41,7 +41,7 @@
             <div class="box" style="height:600px;">
               <div class="box-header">工作单位性质饼图统计</div>
               <div class="box-body">
-                <ve-pie :data="chartData" heigth="100%" :settings="chartSettings"></ve-pie>
+                <ve-pie :data="chartData" heigth="100%" :settings="chartSettings" :extend="extend"></ve-pie>
               </div>
             </div>
         </div>
@@ -64,7 +64,16 @@ export default {
         columns: ['property', 'count'],
         rows: []
       },
-      year: null
+      year: null,
+      extend: {
+        series: {
+          label: {
+            normal: {
+              show: true
+            }
+          }
+        }
+      }
     }
   },
   methods: {

@@ -11,7 +11,7 @@
         </div>
         <div class="p-gray">
           <p v-if="files.length>0">附件：</p>
-          <a v-for="file in files" :key="file.id" :href="file.url">{{file.name}}</a>
+          <a v-for="file in files" :key="file.id" :href="file.url">{{file.name}}<br></a>
         </div>
       </div>
       <div class="box-footer"></div>

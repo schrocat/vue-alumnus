@@ -12,8 +12,20 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://127.0.0.1:7001/',
+        target: 'http://127.0.0.1:7001',
         changeOrigin: true
+      },
+      '/geocoder': {
+        target: 'http://api.map.baidu.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/geocoder':''
+        }
+      },
+      '/ericwu': {
+        target: 'http://stuer.ericwu.cn',
+        changeOrigin: true,
+        ws: true
       }
     },
 
