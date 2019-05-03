@@ -31,3 +31,11 @@ export async function eRate (year) {
   const rsp = await http.get(url)
   return rsp.data
 }
+export async function modus (year) {
+  var url = '/modus'
+  if (year) {
+    url += '?year=' + year
+  }
+  const rsp = await http.get(url)
+  return rsp.data
+}

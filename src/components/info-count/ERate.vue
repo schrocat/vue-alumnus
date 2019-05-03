@@ -10,7 +10,8 @@
                       type="year"
                       placeholder="年份"
                       value-format="yyyy"
-                      class="pull-right">
+                      class="pull-right"
+                      @change="getERate">
                     </el-date-picker>
                   </el-tooltip>
                 </div>
@@ -23,9 +24,17 @@
             <div class="box" style="height:529px;">
                 <div class="box-header">
                     毕业去向
-                    <el-button class="pull-right" circle size="mini" @click="change_chart">
+                    <el-button style="padding:0px;" @click="change_chart">
                         <i v-bind:class="[!isclick ? 'fa fa-bar-chart' : 'fa fa-pie-chart']"></i>
                     </el-button>
+                    <el-date-picker
+                      v-model="cyear"
+                      type="year"
+                      placeholder="年份"
+                      value-format="yyyy"
+                      class="pull-right"
+                      @change="getModus">
+                    </el-date-picker>
                 </div>
                 <div class="box-body">
                     <ve-chart :data ="chartData" :settings="chartSettings"></ve-chart>
@@ -36,7 +45,7 @@
 </template>
 
 <script>
-import { eRate } from '@/api'
+import { eRate, modus } from '@/api'
 import { formatFloat } from '@/utils'
 export default {
   data () {
@@ -46,22 +55,24 @@ export default {
       active: '1',
       isclick: true,
       syear: null,
+      cyear: null,
       cdata: {
         columns: ['year', 'total', 'noWork', 'eRate'],
         rows: []
       },
       chartData: {
-        columns: ['日期', '就业形式人数'],
-        rows: [
-          { '日期': '签约', '就业形式人数': 1523 },
-          { '日期': '签合同', '就业形式人数': 1223 },
-          { '日期': '升学', '就业形式人数': 2123 },
-          { '日期': '出国', '就业形式人数': 4123 },
-          { '日期': '创业', '就业形式人数': 3123 },
-          { '日期': '其他', '就业形式人数': 7123 }
-        ]
+        columns: ['nowStatus', 'num'],
+        rows: []
       },
-      chartSettings: { type: this.typeArr[this.index], radius: 169, offsetY: 225 },
+      chartSettings: {
+        type: this.typeArr[this.index],
+        radius: 169,
+        offsetY: 225,
+        labelMap: {
+          'nowStatus': '就业形式',
+          'num': '就业形式人数',
+        }
+      },
       lineSetting: {
         axisSite: {right: ['eRate']},
         yAxisType: ['normal', 'percent'],
@@ -89,18 +100,24 @@ export default {
       this.isclick = !this.isclick
       this.index++
       if (this.index >= this.typeArr.length) { this.index = 0 }
-      this.chartSettings = { type: this.typeArr[this.index], radius: 169, offsetY: 225 }
+      this.chartSettings.type = this.typeArr[this.index]
     },
     async getERate () {
       const data = await eRate(this.syear)
       if (data.code === 0) {
         this.cdata.rows = data.data
-        console.log(data)
+      }
+    },
+    async getModus () {
+      const data = await modus(this.cyear);
+      if(data.code === 0) {
+        this.chartData.rows = data.data
       }
     }
   },
   mounted () {
     this.getERate()
+    this.getModus()
   }
 }
 </script>

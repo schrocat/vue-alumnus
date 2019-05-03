@@ -3,6 +3,7 @@
         <div class="col-md-4">
           <div class="box">
             <div class="box-header">
+              就业地区分布统计
               <el-date-picker
                 type="year"
                 placeholder="年份"
@@ -13,7 +14,7 @@
               </el-date-picker>
             </div>
             <div class="box-body">
-                <el-table :data="c_data" border stripe height="600">
+                <el-table :data="c_data" border stripe height="540">
                     <el-table-column
                         label="地区">
                         <template slot-scope="scope">
@@ -35,9 +36,14 @@
           </div>
         </div>
         <div class="col-md-8">
-            <baidu-map class="map" :center="{lng: 105.000, lat: 38.000}" :zoom="5">
-                <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection>
-            </baidu-map>
+            <div class="box">
+              <!-- <div class="box-header">地区分布海量图</div> -->
+              <div class="box-body">
+                <baidu-map class="map" :center="{lng: 105.000, lat: 38.000}" :zoom="5">
+                    <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection>
+                </baidu-map>
+              </div>
+            </div>
         </div>
     </div>
 </template>
@@ -103,5 +109,8 @@ export default {
 .map {
   width: 100%;
   height: 600px;
+}
+.anchorBL{
+  display:none;
 }
 </style>
