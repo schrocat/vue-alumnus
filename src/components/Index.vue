@@ -12,9 +12,9 @@
   </div>
 </template>
 <script>
-import Footer from '@/components/index/Footer'
-import Aside from '@/components/index/Aside'
-import Header from '@/components/index/Header'
+import Footer from '@/components/index/Footer.vue'
+import Aside from '@/components/index/Aside.vue'
+import Header from '@/components/index/Header.vue'
 export default {
   name: 'Index',
   components: {Footer, Aside, Header}
