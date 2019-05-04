@@ -96,7 +96,7 @@ export default {
     // 截取内容再要
     shortcut (str) {
       var s = htmlToString(str)
-      return s.slice(0, 36) + '...'
+      return s.slice(0, 32) + '...'
     },
     messageType (type) {
       switch (type) {

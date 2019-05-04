@@ -19,3 +19,8 @@ export async function insertMajor (params) {
   const res = await http.post(URL, params)
   return res.data
 }
+export async function showMajor (mid) {
+  const surl = URL + '/' + mid
+  const res = await http.get(surl)
+  return res.data
+}

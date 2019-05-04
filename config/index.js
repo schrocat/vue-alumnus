@@ -25,7 +25,10 @@ module.exports = {
       '/ericwu': {
         target: 'http://stuer.ericwu.cn',
         changeOrigin: true,
-        ws: true
+        ws: true,
+        pathRewrite: {
+          '^/ericwu': '/api'
+        }
       }
     },
 

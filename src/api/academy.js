@@ -20,3 +20,8 @@ export async function insertAcademy (params) {
   const response = await http.post(url, params)
   return response.data
 }
+export async function showAcademy (mid) {
+  const surl = url + '/' + mid
+  const rsp = await http.get(surl)
+  return rsp.data
+}

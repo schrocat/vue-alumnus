@@ -3,7 +3,9 @@
     <Header></Header>
     <Aside></Aside>
     <div class="content-wrapper">
-      <router-view/>
+      <div class="content_s">
+        <router-view/>
+      </div>
     </div>
     <Footer></Footer>
     <div class="control-sidebar-bg"></div>
@@ -18,3 +20,8 @@ export default {
   components: {Footer, Aside, Header}
 }
 </script>
+<style>
+.content_s{
+  height: 700px;
+}
+</style>

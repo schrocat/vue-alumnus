@@ -46,7 +46,7 @@
 
 <script>
 import { eRate, modus } from '@/api'
-import { formatFloat } from '@/utils'
+// import { formatFloat } from '@/utils'
 export default {
   data () {
     this.typeArr = ['pie', 'histogram']
@@ -70,7 +70,7 @@ export default {
         offsetY: 225,
         labelMap: {
           'nowStatus': '就业形式',
-          'num': '就业形式人数',
+          'num': '就业形式人数'
         }
       },
       lineSetting: {
@@ -109,8 +109,8 @@ export default {
       }
     },
     async getModus () {
-      const data = await modus(this.cyear);
-      if(data.code === 0) {
+      const data = await modus(this.cyear)
+      if (data.code === 0) {
         this.chartData.rows = data.data
       }
     }

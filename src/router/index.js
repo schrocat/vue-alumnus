@@ -17,10 +17,12 @@ import ERate from '@/components/info-count/ERate'
 import Home from '@/components/Home'
 import DelInfo from '@/components/info-post/DelInfo'
 import EditInfo from '@/components/info-post/EditInfo'
+import Evaluation from '@/components/info-count/Evaluation'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/index',
@@ -42,6 +44,10 @@ export default new Router({
             {
               path: 'erate',
               component: ERate
+            },
+            {
+              path: 'eva',
+              component: Evaluation
             }
           ]
         },
