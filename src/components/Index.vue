@@ -12,9 +12,9 @@
   </div>
 </template>
 <script>
-import Footer from './index/Footer'
-import Aside from './index/Aside'
-import Header from './index/Header'
+import Footer from '@/components/index/Footer'
+import Aside from '@/components/index/Aside'
+import Header from '@/components/index/Header'
 export default {
   name: 'Index',
   components: {Footer, Aside, Header}
