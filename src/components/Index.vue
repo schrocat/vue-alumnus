@@ -22,6 +22,6 @@ export default {
 </script>
 <style>
 .content_s{
-  height: 700px;
+  min-height: 700px;
 }
 </style>

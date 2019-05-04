@@ -45,6 +45,7 @@ import E from 'wangeditor'
 import sso from '@/utils/oss.js'
 import { postOa, getAcademies } from '@/api'
 import { Loading } from 'element-ui'
+import store from '@/store'
 export default {
   name: 'CreateInfo',
   data () {
@@ -53,7 +54,7 @@ export default {
         title: '',
         type: '',
         content: '',
-        userId: 1,
+        userId: '',
         academyId: '',
         files: []
       },
@@ -64,7 +65,8 @@ export default {
   },
   methods: {
     async postOa () {
-      this.form.userId = 14
+      const user = store.getters.user
+      this.form.userId = user.id
       this.form.content = this.w_editor.txt.html()
       this.form.type = parseInt(this.form.type)
       this.form.academyId = parseInt(this.form.academyId)
@@ -100,11 +102,12 @@ export default {
       this.form.files = await sso.uploadMutilLocalFiles(this.files)
     },
     initForm () {
+      const user = store.getters.user
       this.form = {
         title: '',
         type: '',
         content: '',
-        userId: 14,
+        userId: user.id,
         academyId: '',
         files: []
       }

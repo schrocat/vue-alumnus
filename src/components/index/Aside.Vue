@@ -15,13 +15,13 @@
             </router-link>
           </li>
           <li class="treeview">
-            <router-link to="#">
+            <a>
               <i class="fa fa-th"></i>
               <span>系统设置</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
-            </router-link>
+            </a>
             <ul class="treeview-menu">
               <li>
                 <router-link to="/index/colloge">
@@ -38,13 +38,13 @@
             </ul>
           </li>
           <li class="treeview">
-            <router-link to="#">
+            <a>
                 <i class="fa fa-dashboard"></i>
               <span>企业信息管理</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
-            </router-link>
+            </a>
             <ul class="treeview-menu">
               <li>
                 <router-link to="/index/check">
@@ -67,7 +67,7 @@
 
 <script>
 export default {
-//   name: 'Aside'
+  name: 'Aside'
 }
 </script>
 

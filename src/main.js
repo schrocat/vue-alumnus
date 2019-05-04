@@ -45,7 +45,7 @@ router.beforeEach(async (to, from, next) => {
   if (isLogin) {
     if (!store.getters.user) {
       const result = await getUserInfo()
-      if (result.code === 0 && (result.data.role === 7 || result.data.role === 5)) {
+      if (result.code === 0 && (result.data.role === 8 || result.data.role === 6)) {
         store.commit('setUser', result.data)
         store.commit('loginStatus', true)
       } else {

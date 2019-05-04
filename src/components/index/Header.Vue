@@ -23,7 +23,7 @@
                 <li class="user-header">
                   <img :src="user.avatar" class="img-circle" alt="User Image">
                   <p style="font-size:16px">用户名：{{user.email}}</p>
-                  <p style="font-size:16px" v-if="user.role===7">超級管理员</p>
+                  <p style="font-size:16px" v-if="user.role===8">超級管理员</p>
                   <p style="font-size:16px" v-else>管理员</p>
                 </li>
                 <li class="user-body">
@@ -58,6 +58,7 @@ import { deleteCookie } from '@/utils'
 import { showAcademy, showMajor } from '@/api'
 export default {
   data () {
+    name: 'Header'
     return {
       user: {},
       academy: '无',
