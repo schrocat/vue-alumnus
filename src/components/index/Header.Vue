@@ -57,8 +57,8 @@ import store from '@/store'
 import { deleteCookie } from '@/utils'
 import { showAcademy, showMajor } from '@/api'
 export default {
+  name: 'Header',
   data () {
-    name: 'Header'
     return {
       user: {},
       academy: '无',
