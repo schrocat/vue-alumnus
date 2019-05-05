@@ -15,15 +15,15 @@
   </div>
 </template>
 <script>
-import Header from './indexP/Header'
-import Aside from './indexP/Aside'
-import Footer from './indexP/Footer'
+import HeaderP from './indexP/HeaderP'
+import AsideP from './indexP/AsideP'
+import FooterP from './indexP/FooterP'
 export default {
   name: 'Index',
   components: {
-    'a-footer': Footer,
-    'a-aside': Aside,
-    'a-header': Header
+    'a-footer': FooterP,
+    'a-aside': AsideP,
+    'a-header': HeaderP
   }
 }
 </script>

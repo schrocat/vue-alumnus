@@ -6,6 +6,5 @@ export async function getLoginStatus () {
 }
 export async function getUserInfo () {
   const rsp = await thirdHttp.get('/getUserInfo')
-  // console.log(rsp)
   return rsp.data
 }

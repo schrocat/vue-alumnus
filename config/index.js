@@ -8,6 +8,7 @@ module.exports = {
   dev: {
 
     // Paths
+    // 代理
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {

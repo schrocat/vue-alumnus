@@ -20,11 +20,14 @@ import { setCookie } from '@/utils'
 import { getLoginStatus, getUserInfo } from '@/api'
 
 Vue.use(ElementUI)
+// 百度
 Vue.use(bdm, {
   ak: 'HGvWdWGbxLlxvNWe7iFueKB9G5qGmY1S'
 })
+// vue-echart
 Vue.use(vchart)
 Vue.config.productionTip = false
+// 路由前置守卫
 router.beforeEach(async (to, from, next) => {
   if (to.query.auth_token) {
     setCookie('auth_token', to.query.auth_token)
@@ -45,7 +48,8 @@ router.beforeEach(async (to, from, next) => {
   if (isLogin) {
     if (!store.getters.user) {
       const result = await getUserInfo()
-      if (result.code === 0 && (result.data.role === 8 || result.data.role === 6)) {
+      // 获取用户信息是否成功，并且用户的等级大于5
+      if (result.code === 0 && (result.data.role > 5)) {
         store.commit('setUser', result.data)
         store.commit('loginStatus', true)
       } else {
