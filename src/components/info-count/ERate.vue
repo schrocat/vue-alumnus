@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-md-6">
             <div class="box" style="height:529px;">
                 <div class="box-header">
                   就业率
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-md-6">
             <div class="box" style="height:529px;">
                 <div class="box-header">
                     毕业去向

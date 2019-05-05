@@ -15,9 +15,9 @@
   </div>
 </template>
 <script>
-import Header from './index/Header'
-import Aside from './index/Aside'
-import Footer from './index/Footer'
+import Header from './indexP/Header'
+import Aside from './indexP/Aside'
+import Footer from './indexP/Footer'
 export default {
   name: 'Index',
   components: {

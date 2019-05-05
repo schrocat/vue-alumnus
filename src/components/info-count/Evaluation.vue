@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-md-7">
             <div class="box" style="height:600px;">
                 <div class="box-header">企业用人情况统计</div>
                 <div class="box-body">
@@ -18,7 +18,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-md-5">
             <div class="box" style="height:600px;">
                 <div class="box-header">企业对毕业生评价统计</div>
                 <div class="box-body">
