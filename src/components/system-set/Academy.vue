@@ -3,7 +3,7 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <table id="table" class="table table-bordered table-striped">
+                    <table id="table" class="table">
                         <thead>
                             <tr>
                                 <th>编号</th>
@@ -13,17 +13,21 @@
                             </tr>
                         </thead>
                         <tbody  v-for="(item, index) in table_items" :key="item.id">
+                          <tr>
                             <td style="width:5%;">{{ index + 1}}</td>
                             <td style="width:15%;">{{ item.name }}</td>
-                            <td style="width:70%;padding:5px;">{{ item.info }}</td>
-                            <td class="pull-right">
+                            <td style="width:70%;">{{ item.info }}</td>
+                            <td>
+                              <div class="pull-right">
                                 <button type="button" class="btn btn-default btn-sm" @click="edit_form(item)">
                                     <i class="fa fa-edit"></i>
                                 </button>
                                 <button type="button" class="btn btn-defalut btn-sm" @click="openMessageBox(item.id)">
                                     <i class="fa fa-trash-o"></i>
                                 </button>
+                              </div>
                             </td>
+                          </tr>
                         </tbody>
                     </table>
                     <el-dialog

@@ -18,6 +18,7 @@ import Home from '@/components/Home'
 import DelInfo from '@/components/info-post/DelInfo'
 import EditInfo from '@/components/info-post/EditInfo'
 import Evaluation from '@/components/info-count/Evaluation'
+import Salary from '@/components/info-count/Salary'
 
 Vue.use(Router)
 
@@ -48,6 +49,10 @@ export default new Router({
             {
               path: 'eva',
               component: Evaluation
+            },
+            {
+              path: 'salary',
+              component: Salary
             }
           ]
         },
@@ -92,10 +97,6 @@ export default new Router({
         {
           path: 'found',
           component: Found
-        },
-        {
-          path: 'home',
-          component: Home
         }
       ]
     },
@@ -107,6 +108,10 @@ export default new Router({
     {
       path: '/',
       redirect: '/index/info/com'
+    },
+    {
+      path: '/home',
+      component: Home
     }
   ]
 })

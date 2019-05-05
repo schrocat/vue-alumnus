@@ -22,9 +22,9 @@
               <ul class="dropdown-menu">
                 <li class="user-header">
                   <img :src="user.avatar" class="img-circle" alt="User Image">
-                  <p style="font-size:16px">用户名：{{user.email}}</p>
-                  <p style="font-size:16px" v-if="user.role===8">超級管理员</p>
-                  <p style="font-size:16px" v-else>管理员</p>
+                  <p style="font-size:16px">{{user.email}}</p>
+                  <p style="font-size:16px">{{user.role===8?'超级管理员':'学校管理员'}}</p>
+                  <!-- <p style="font-size:16px" v-else>用户身份：学校管理员</p> -->
                 </li>
                 <li class="user-body">
                   <p>真实姓名:{{user.name?user.name:'不愿意透露姓名的人'}}</p>
@@ -38,7 +38,7 @@
                 </li>
                 <li class="user-footer">
                   <div class="pull-left">
-                    <a class="btn btn-default btn-flat">修改资料</a>
+                    <a class="btn btn-default btn-flat" href="/home" target="_blank">修改资料</a>
                   </div>
                   <div class="pull-right">
                     <a class="btn btn-default btn-flat" @click="logout()">注销</a>

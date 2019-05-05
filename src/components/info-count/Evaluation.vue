@@ -34,14 +34,14 @@ export default {
   name: 'Evaluation',
   data () {
     return {
-        comEmployee: [],
-        evaluations: {},
-        chartData:{
-            columns: [],
-            rows: []
-        },
-        chartSettings: {
-        }
+      comEmployee: [],
+      evaluations: {},
+      chartData: {
+        columns: [],
+        rows: []
+      },
+      chartSettings: {
+      }
     }
   }
 }

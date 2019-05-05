@@ -39,7 +39,7 @@
           </li>
           <li class="treeview">
             <a>
-                <i class="fa fa-dashboard"></i>
+              <i class="fa fa-dashboard"></i>
               <span>企业信息管理</span>
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>

@@ -1,23 +1,30 @@
 <template>
   <div class="wrapper">
-    <Header></Header>
-    <Aside></Aside>
+    <!-- <Header></Header> -->
+    <a-header></a-header>
+    <a-aside></a-aside>
+    <!-- <Aside></Aside> -->
     <div class="content-wrapper">
       <div class="content_s">
         <router-view/>
       </div>
     </div>
-    <Footer></Footer>
+    <!-- <Footer></Footer> -->
+    <a-footer></a-footer>
     <div class="control-sidebar-bg"></div>
   </div>
 </template>
 <script>
-import Footer from 'Footer.vue'
-import Aside from 'Aside.vue'
-import Header from 'Header.vue'
+import Footer from './index/Footer'
+import Aside from './index/Aside'
+import Header from './index/Header'
 export default {
   name: 'Index',
-  components: {Footer, Aside, Header}
+  components: {
+    'a-footer': Footer,
+    'a-aside': Aside,
+    'a-header': Header
+  }
 }
 </script>
 <style>

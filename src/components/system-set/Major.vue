@@ -3,7 +3,7 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <table id="M_table" class="table table-bordered table-striped">
+                    <table id="M_table" class="table">
                         <thead>
                             <tr>
                                 <th>编号</th>
@@ -14,6 +14,7 @@
                             </tr>
                         </thead>
                         <tbody v-for="(major, index) in majors" :key="major.id">
+                          <tr>
                             <td style="width:5%;">{{index + 1}}</td>
                             <td style="width:15%;">{{major.name}}</td>
                             <td style="width:15%">{{major.academy_name}}</td>
@@ -26,6 +27,7 @@
                                     <i class="fa fa-trash-o"></i>
                                 </button>
                             </td>
+                          </tr>
                         </tbody>
                     </table>
                     <el-dialog

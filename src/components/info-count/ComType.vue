@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-7">
-            <div class="box">
+            <div class="box" style="height:600px;">
               <div class="box-header">
                 <el-date-picker
                   v-model="year"
