@@ -1,16 +1,16 @@
 <template>
   <div class="wrapper">
-    <!-- <Header></Header> -->
-    <a-header></a-header>
-    <a-aside></a-aside>
-    <!-- <Aside></Aside> -->
+    <HeaderP></HeaderP>
+    <!-- <a-header></a-header>
+    <a-aside></a-aside> -->
+    <AsideP></AsideP>
     <div class="content-wrapper">
       <div class="content_s">
         <router-view/>
       </div>
     </div>
-    <!-- <Footer></Footer> -->
-    <a-footer></a-footer>
+    <FooterP></FooterP>
+    <!-- <a-footer></a-footer> -->
     <div class="control-sidebar-bg"></div>
   </div>
 </template>
@@ -20,11 +20,7 @@ import AsideP from './indexP/AsideP'
 import FooterP from './indexP/FooterP'
 export default {
   name: 'Index',
-  components: {
-    'a-footer': FooterP,
-    'a-aside': AsideP,
-    'a-header': HeaderP
-  }
+  components: {FooterP, AsideP, HeaderP}
 }
 </script>
 <style>

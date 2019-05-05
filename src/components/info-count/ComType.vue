@@ -34,6 +34,7 @@
                       </template>
                   </el-table-column>
                 </el-table>
+                <p>总人数：{{total}}人</p>
               </div>
             </div>
         </div>
