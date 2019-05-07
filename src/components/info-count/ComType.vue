@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-7">
-            <div class="box" style="height:600px;">
+            <div class="box" style="height:640px;overflow:auto;">
               <div class="box-header">
                 <el-date-picker
                   v-model="year"
@@ -39,7 +39,7 @@
             </div>
         </div>
         <div class="col-md-5">
-            <div class="box" style="height:600px;">
+            <div class="box" style="height:640px;">
               <div class="box-header">工作单位性质统计</div>
               <div class="box-body">
                 <ve-pie :data="chartData" heigth="100%" :settings="chartSettings" :extend="extend"></ve-pie>

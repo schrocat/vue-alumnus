@@ -67,7 +67,7 @@
 
 <script>
 export default {
-  name: 'Aside'
+  name: 'AsideP'
 }
 </script>
 

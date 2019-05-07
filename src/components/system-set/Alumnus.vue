@@ -54,17 +54,17 @@
                 <el-dialog
                   :visible.sync="dialogFormVisible"
                   @close="dialogFormVisible = false">
-                  <el-form :model="form" :rules="rules">
-                    <el-form-item label="账号" label-width="12%" prop="email">
+                  <el-form :model="form" :rules="rules" label-width="80px">
+                    <el-form-item label="账号" prop="email">
                       <el-input v-model="form.email"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" label-width="12%" prop="password">
+                    <el-form-item label="密码"  prop="password">
                       <el-input v-model="form.password"  show-password></el-input>
                     </el-form-item>
-                    <el-form-item label="确认密码" label-width="12%" prop="surePwd">
+                    <el-form-item label="确认密码" prop="surePwd">
                       <el-input v-model="form.surePwd" show-password></el-input>
                     </el-form-item>
-                    <el-form-item label="学院" label-width="12%" prop="academyId">
+                    <el-form-item label="学院" prop="academyId">
                       <el-select v-model="form.academyId" :remote="true">
                         <el-option v-for="academy in academies"
                           :key="academy.id"
@@ -73,7 +73,7 @@
                         </el-option>
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="系" label-width="12%" prop="majorId">
+                    <el-form-item label="系" prop="majorId">
                       <el-select v-model="form.majorId" :remote="true">
                         <el-option v-for="major in majors"
                           :key="major.id"
@@ -142,7 +142,7 @@ export default {
           trigger: ['blur', 'change']
         }],
         password: [{
-          required: true,
+          // required: true,
           message: '请输入密码',
           trigger: 'blur'
         }, {
@@ -152,7 +152,7 @@ export default {
           trigger: 'blur'
         }],
         surePwd: [{
-          required: true,
+          // required: true,
           message: '请重新输入密码',
           trigger: 'blur'
         }, {

@@ -3,12 +3,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="box">
-                    <div class="box-header with-border">
-                        <el-select v-model="sel_val" placeholder="审核状态">
-                            <el-option label="已审核" value="1"></el-option>
-                            <el-option label="未审核" value="2"></el-option>
-                        </el-select>
-                    </div>
                     <div class="box-body">
                         <el-table
                             :data="tableData"
@@ -20,28 +14,42 @@
                                         <span>{{ props.row.name }}</span>
                                     </el-form-item>
                                     <el-form-item label="单位地址">
-                                        <span>{{ props.row.addr }}</span>
+                                        <span>{{ props.row.address }}</span>
                                     </el-form-item>
                                     <el-form-item label="工商注册号">
-                                        <span>{{ props.row.reg_no }}</span>
+                                        <span>{{ props.row.regNum }}</span>
+                                    </el-form-item>
+                                    <el-form-item label="公司业务">
+                                        <span>{{ props.row.business }}</span>
+                                    </el-form-item>
+                                    <el-form-item label="公司性质">
+                                        <span>{{ props.row.property }}</span>
+                                    </el-form-item>
+                                    <el-form-item label="公司人数">
+                                        <span>{{ props.row.people }}</span>
+                                    </el-form-item>
+                                    <el-form-item label="公司介绍">
+                                        <span>{{ props.row.info }}</span>
+                                    </el-form-item>
+                                    <el-form-item label="联系方式">
+                                        <span>{{ props.row.phone }}</span>
                                     </el-form-item>
                                     <el-form-item label="联系人">
-                                        <span>{{ props.row.plink }}</span>
+                                        <span>{{ props.row.contact }}</span>
                                     </el-form-item>
-                                    <el-form-item label="证明文件">
+                                    <!-- <el-form-item label="证明文件">
                                       <a href="http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png" target="_blank">
                                       http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png
                                     </a>
-                                    </el-form-item>
+                                    </el-form-item> -->
                                 </el-form>
-                                <el-button  @click="ex_status" size="mini" type="success" plain>审核通过</el-button>
-                                <el-button  @click="ex_status" size="mini" type="danger" plain>审核驳回</el-button>
+                                <el-button  @click="pass(props.row)" size="mini" type="success" plain>审核通过</el-button>
+                                <el-button  @click="out(props.row)" size="mini" type="danger" plain>审核驳回</el-button>
                             </template>
                             </el-table-column>
                             <el-table-column
                             label="编号"
-                            type="index"
-                            :index="gindex">
+                            type="index">
                             </el-table-column>
                             <el-table-column
                             label="单位名称"
@@ -49,14 +57,11 @@
                             </el-table-column>
                             <el-table-column
                             label="工商注册号"
-                            prop="reg_no">
+                            prop="regNum">
                             </el-table-column>
                             <el-table-column
-                            label="审核状态">
-                            <span>
-                                未审核
-                                <!-- <i class="el-icon-sort" @click="ex_status"></i> -->
-                            </span>
+                            label="公司性质"
+                            prop="property">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -64,7 +69,10 @@
                         <div class="block pull-right">
                             <el-pagination
                                 layout="prev, pager, next"
-                                :total="total" background>
+                                :total="total" background
+                                @prev-click="patition"
+                                @next-click="patition"
+                                @current-change="patition">
                             </el-pagination>
                         </div>
                     </div>
@@ -90,85 +98,81 @@
 </style>
 
 <script>
+import { company, total, deleteCompany } from '@/my'
+import { insertComuser } from '@/api'
 export default {
   data () {
     return {
-      tableData: [{
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }, {
-        name: 'double 6',
-        addr: 'stu',
-        reg_no: 't2333',
-        plink: 'dou'
-      }],
-      sel_val: '',
-      total: 30
+      tableData: [],
+      total: 0,
+      offset: 0,
+      pageSize: 10
     }
   },
   methods: {
-    gindex (index) {
-      return index + 1
+    async getCompany () {
+      const data = await company(this.offset, this.pageSize)
+      if (data.code === 0) {
+        this.tableData = data.data
+      }
     },
-    ex_status () {
-      this.$confirm('是否确认审核通过该信息？', '提示', {
-        confirmButtomText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+    async getTotal () {
+      const data = await total()
+      if (data.code === 0) {
+        this.total = data.data[0].total
+      }
+    },
+    async delete_company (id) {
+      const data = await deleteCompany(id)
+      if (data.code === 0) {
+        this.$message.success('操作成功')
+      } else {
+        this.$message.warning(`操作失败${data.msg}`)
+      }
+      this.getCompany()
+    },
+    async insert_comuser (params) {
+      const data = await insertComuser(params)
+      if (data.code === 0) {
+        this.delete_company(params.id)
+        // this.$message.success('操作成功')
+      } else {
+        this.$message.warning(`操作失败：${data.msg}`)
+      }
+      this.getCompany()
+    },
+    pass (params) {
+      const user = {
+        email: params.email,
+        password: params.password,
+        company: {
+          name: params.name,
+          address: params.address,
+          regNum: params.regNum,
+          property: params.property,
+          info: params.info
+        }
+      }
+      this.$confirm('确定审核通过？', '提示')
+        .then(() => {
+          this.insert_comuser(user)
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作'
+    },
+    out (params) {
+      const id = params.id
+      this.$confirm('确定审核驳回？', '提示')
+        .then(() => {
+          this.delete_company(id)
         })
-      })
+    },
+    patition (cur) {
+      this.offset = (cur - 1) * this.pageSize
+      this.getCompany()
     }
+  },
+  mounted () {
+    this.getCompany()
+    this.getTotal()
   }
 }
 </script>

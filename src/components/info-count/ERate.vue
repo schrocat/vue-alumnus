@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-6">
-            <div class="box" style="height:529px;">
+            <div class="box" style="height:640px;">
                 <div class="box-header">
                   就业率
                   <el-tooltip content="展示过去五年内的就业率,默认是今年" placement="right" effect="dark">
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="box" style="height:529px;">
+            <div class="box" style="height:640px;">
                 <div class="box-header">
                     毕业去向
                     <el-button style="padding:0px;" @click="change_chart">

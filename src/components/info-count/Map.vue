@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-4">
-          <div class="box">
+          <div class="box" style="height:640px;overflow:auto;">
             <div class="box-header">
               就业地区分布统计
               <el-date-picker
@@ -13,8 +13,8 @@
                 @change="getWork()">
               </el-date-picker>
             </div>
-            <div class="box-body">
-                <el-table :data="c_data" border stripe height="540">
+            <div class="box-body" >
+                <el-table :data="c_data" border stripe>
                     <el-table-column
                         label="地区">
                         <template slot-scope="scope">
@@ -36,11 +36,12 @@
           </div>
         </div>
         <div class="col-md-8">
-            <div class="box">
+            <div class="box" style="height:640px;">
               <!-- <div class="box-header">地区分布海量图</div> -->
               <div class="box-body">
                 <baidu-map class="map" :center="{lng: 105.000, lat: 38.000}" :zoom="5">
                     <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection>
+                    <!-- <bml-heatmap :data="c_points" :max="100" :radius="50" :gradient="gradient"></bml-heatmap> -->
                 </baidu-map>
               </div>
             </div>
@@ -51,13 +52,18 @@
 <script>
 import { workLocation, workPosition } from '@/api'
 import { formatFloat } from '@/utils'
+import { BmlHeatmap } from 'vue-baidu-map'
 export default {
+  components: {
+    BmlHeatmap
+  },
   data () {
     return {
       c_data: [],
       c_points: [],
       year: null,
-      total: 0
+      total: 0,
+      // gradient: {1:'rgb(0, 0, 0)',1:'rgb(255, 0, 0)'}
     }
   },
   methods: {
@@ -67,12 +73,12 @@ export default {
         const d = data.data
         const points = []
         for (let i = 0; i < d.length; i++) {
-          const e = d[i].liveLocation
-          if (e) {
-            points.push(JSON.parse(e))
-          }
+          const e = JSON.parse(d[i].liveLocation)
+          // e.count = d[i].count
+          points.push(e)
         }
         this.c_points = points
+        console.log(this.c_points)
       }
     },
     async getWorkPosition () {
