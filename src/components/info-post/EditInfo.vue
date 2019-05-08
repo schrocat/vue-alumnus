@@ -27,13 +27,13 @@
             </div>
         </div>
         <div class="box-footer">
-            <div class="btn btn-default btn-file">
+            <!-- <div class="btn btn-default btn-file">
                 <i class="fa fa-paperclip"></i>附件
                 <input type="file" ref="attachment" name="attachment" multiple="multiple" @change="upload_file">
-            </div>
-            <a class="help-block" v-for="file in files" :key="file.name">{{file.name}}</a>
+            </div> -->
+            <!-- <a class="help-block" v-for="file in files" :key="file.name">{{file.name}}</a> -->
             <div class="pull-right">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" @click="updateOa">
                     <i class="fa fa-envelope-o"></i>&nbsp;&nbsp;&nbsp;&nbsp;编辑&nbsp;&nbsp;&nbsp;&nbsp;
                 </button>
             </div>
@@ -43,19 +43,22 @@
 <script>
 import E from 'wangeditor'
 import sso from '@/utils/oss.js'
-import { getAcademies, getOaById } from '@/api'
+import { getAcademies, getOaById, updateOa } from '@/api'
+// import store from '@/store'
+// import { parse } from 'path';
 // import { Loading } from 'element-ui'
 export default {
   name: 'CreateInfo',
   data () {
     return {
       form: {
+        id: '',
         title: '',
         type: '',
         content: '',
         userId: 1,
-        academyId: '',
-        files: []
+        academyId: ''
+        // files: []
       },
       files: [],
       text: '',
@@ -63,8 +66,20 @@ export default {
     }
   },
   methods: {
-    updateOa () {
-
+    async updateOa () {
+      // const user = store.getters.user
+      const id = this.form.id
+      const params = {
+        title: this.form.title,
+        content: this.form.content,
+        type: parseInt(this.form.type),
+        academyId: parseInt(this.form.academyId)
+      }
+      const data = await updateOa(id, params)
+      if (data.code === 0) {
+        this.$message.success('编辑成功')
+      }
+      this.$router.push('/index/post/allInfo')
     },
     async upload_file () {
       this.files = this.$refs.attachment.files

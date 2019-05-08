@@ -70,6 +70,7 @@
                             <el-pagination
                                 layout="prev, pager, next"
                                 :total="total" background
+                                :page-size="pageSize"
                                 @prev-click="patition"
                                 @next-click="patition"
                                 @current-change="patition">
@@ -106,7 +107,7 @@ export default {
       tableData: [],
       total: 0,
       offset: 0,
-      pageSize: 10
+      pageSize: 12
     }
   },
   methods: {
@@ -114,6 +115,7 @@ export default {
       const data = await company(this.offset, this.pageSize)
       if (data.code === 0) {
         this.tableData = data.data
+        this.getTotal()
       }
     },
     async getTotal () {
@@ -132,16 +134,6 @@ export default {
       this.getCompany()
     },
     async insert_comuser (params) {
-      const data = await insertComuser(params)
-      if (data.code === 0) {
-        this.delete_company(params.id)
-        // this.$message.success('操作成功')
-      } else {
-        this.$message.warning(`操作失败：${data.msg}`)
-      }
-      this.getCompany()
-    },
-    pass (params) {
       const user = {
         email: params.email,
         password: params.password,
@@ -153,9 +145,19 @@ export default {
           info: params.info
         }
       }
+      const data = await insertComuser(user)
+      if (data.code === 0) {
+        this.delete_company(params.id)
+        // this.$message.success('操作成功')
+      } else {
+        this.$message.warning(`操作失败：${data.msg}`)
+      }
+      this.getCompany()
+    },
+    pass (params) {
       this.$confirm('确定审核通过？', '提示')
         .then(() => {
-          this.insert_comuser(user)
+          this.insert_comuser(params)
         })
     },
     out (params) {
@@ -172,7 +174,7 @@ export default {
   },
   mounted () {
     this.getCompany()
-    this.getTotal()
+    // this.getTotal()
   }
 }
 </script>

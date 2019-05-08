@@ -10,58 +10,31 @@
                             <el-table-column type="expand">
                             <template slot-scope="props">
                                 <el-form label-position="left" inline class="demo-table-expand">
-                                    <el-form-item label="单位名称">
-                                        <span>{{ props.row.name }}</span>
+                                    <el-form-item label="详细内容">
+                                        <span>{{ props.row.content }}</span>
                                     </el-form-item>
-                                    <el-form-item label="单位地址">
-                                        <span>{{ props.row.address }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="工商注册号">
-                                        <span>{{ props.row.regNum }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="公司业务">
-                                        <span>{{ props.row.business }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="公司性质">
-                                        <span>{{ props.row.property }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="公司人数">
-                                        <span>{{ props.row.people }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="公司介绍">
-                                        <span>{{ props.row.info }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="联系方式">
-                                        <span>{{ props.row.phone }}</span>
-                                    </el-form-item>
-                                    <el-form-item label="联系人">
-                                        <span>{{ props.row.contact }}</span>
-                                    </el-form-item>
-                                    <!-- <el-form-item label="证明文件">
-                                      <a href="http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png" target="_blank">
-                                      http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png
-                                    </a>
-                                    </el-form-item> -->
                                 </el-form>
-                                <el-button  @click="pass(props.row)" size="mini" type="success" plain>审核通过</el-button>
+                                <el-button  @click="pass(props.row)" size="mini" type="success" plain>审核通过并发布</el-button>
                                 <el-button  @click="out(props.row)" size="mini" type="danger" plain>审核驳回</el-button>
                             </template>
                             </el-table-column>
                             <el-table-column
-                            label="编号"
-                            type="index">
+                              label="编号"
+                              type="index">
                             </el-table-column>
                             <el-table-column
-                            label="单位名称"
-                            prop="name">
+                              label="标题"
+                              prop="title">
                             </el-table-column>
                             <el-table-column
-                            label="工商注册号"
-                            prop="regNum">
+                              label="内容摘要">
+                              <template slot-scope="scope">
+                                {{shortcut(tableData[scope.$index].content)}}
+                              </template>
                             </el-table-column>
                             <el-table-column
-                            label="公司性质"
-                            prop="property">
+                              label="类型">
+                              招聘信息
                             </el-table-column>
                         </el-table>
                     </div>
@@ -72,6 +45,7 @@
                                 :total="total" background
                                 @prev-click="patition"
                                 @next-click="patition"
+                                :page-size="pageSize"
                                 @current-change="patition">
                             </el-pagination>
                         </div>
@@ -98,81 +72,81 @@
 </style>
 
 <script>
-import { company, total, deleteCompany } from '@/my'
-import { insertComuser } from '@/api'
+import { recruitment, recTotal, updateRecruitment } from '@/my'
+import { insertPosts } from '@/api'
 export default {
   data () {
     return {
       tableData: [],
       total: 0,
       offset: 0,
-      pageSize: 10
+      pageSize: 12
     }
   },
   methods: {
-    async getCompany () {
-      const data = await company(this.offset, this.pageSize)
+    async getRecruitment () {
+      const data = await recruitment(this.offset, this.pageSize)
       if (data.code === 0) {
         this.tableData = data.data
       }
+      this.setTotal()
     },
-    async getTotal () {
-      const data = await total()
-      if (data.code === 0) {
-        this.total = data.data[0].total
-      }
-    },
-    async delete_company (id) {
-      const data = await deleteCompany(id)
+    async putRecruitment (id, params) {
+      const data = await updateRecruitment(id, params)
       if (data.code === 0) {
         this.$message.success('操作成功')
       } else {
         this.$message.warning(`操作失败${data.msg}`)
       }
-      this.getCompany()
+      this.getRecruitment()
     },
-    async insert_comuser (params) {
-      const data = await insertComuser(params)
+    async setTotal () {
+      const data = await recTotal()
       if (data.code === 0) {
-        this.delete_company(params.id)
+        this.total = data.data[0].total
+      }
+    },
+    async insertPost (params) {
+      const posts = {
+        // userId: params.userId,
+        title: params.title,
+        content: params.content,
+        type: params.type,
+        tags: []
+      }
+      const data = await insertPosts(posts)
+      if (data.code === 0) {
+        this.putRecruitment(params.id, {status: 1})
         // this.$message.success('操作成功')
       } else {
-        this.$message.warning(`操作失败：${data.msg}`)
+        this.$message.warning(`${data.msg}`)
       }
-      this.getCompany()
+    },
+    shortcut (s) {
+      return s.slice(0, 32) + '...'
     },
     pass (params) {
-      const user = {
-        email: params.email,
-        password: params.password,
-        company: {
-          name: params.name,
-          address: params.address,
-          regNum: params.regNum,
-          property: params.property,
-          info: params.info
-        }
-      }
       this.$confirm('确定审核通过？', '提示')
         .then(() => {
-          this.insert_comuser(user)
+          // this.insert_comuser(user)
+          this.insertPost(params)
         })
     },
     out (params) {
       const id = params.id
       this.$confirm('确定审核驳回？', '提示')
         .then(() => {
-          this.delete_company(id)
+          this.putRecruitment(id, {status: 2})
         })
     },
     patition (cur) {
       this.offset = (cur - 1) * this.pageSize
-      this.getCompany()
+      this.getRecruitment()
     }
   },
   mounted () {
-    this.getCompany()
-    this.getTotal()
+    this.getRecruitment()
+    this.setTotal()
   }
 }
 </script>

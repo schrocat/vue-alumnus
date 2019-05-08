@@ -62,7 +62,7 @@ export default {
       c_data: [],
       c_points: [],
       year: null,
-      total: 0,
+      total: 0
       // gradient: {1:'rgb(0, 0, 0)',1:'rgb(255, 0, 0)'}
     }
   },

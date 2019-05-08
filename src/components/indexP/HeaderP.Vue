@@ -38,7 +38,7 @@
                 </li>
                 <li class="user-footer">
                   <div class="pull-left">
-                    <a class="btn btn-default btn-flat" href="/home" target="_blank">修改资料</a>
+                    <a class="btn btn-default btn-flat" href="\home" target="_blank">修改资料</a>
                   </div>
                   <div class="pull-right">
                     <a class="btn btn-default btn-flat" @click="logout()">注销</a>
@@ -70,6 +70,7 @@ export default {
       this.user = store.getters.user
       this.setAcademy(this.user.academyId)
       this.setMajor(this.user.majorId)
+      // this.setURL(this.user.id)
     },
     async setAcademy (id) {
       const data = await showAcademy(id)

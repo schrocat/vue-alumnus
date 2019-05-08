@@ -7,9 +7,9 @@
                         <thead>
                             <tr>
                                 <th>编号</th>
-                                <th>系名</th>
+                                <th>专业名</th>
                                 <th>所属院</th>
-                                <th>系信息</th>
+                                <th>专业信息</th>
                                 <th></th>
                             </tr>
                         </thead>
