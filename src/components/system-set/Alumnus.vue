@@ -3,7 +3,7 @@
     <div class="col-xs-12">
         <div class="box">
             <div class="box-header">
-              <el-select v-model="searchp.majorId" placeholder="系" :remote="true" class="pull-right">
+                <el-select v-model="searchp.majorId" placeholder="系" :remote="true" class="pull-right">
                   <el-option v-for="major in majors"
                     :key="major.id"
                     :label="major.name"
@@ -21,36 +21,43 @@
                 <el-button  @click="clear()" class="pull-right">清除筛选</el-button>
             </div>
             <div class="box-body">
-                <table id="table" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                        <th>编号</th>
-                        <th>账号</th>
-                        <th>密码</th>
-                        <th>学院</th>
-                        <th>系</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(student,index) in students" :key="student.id">
-                        <td>{{index+1}}</td>
-                        <td>{{student.email}}</td>
-                        <td>{{student.password}}</td>
-                        <td>{{student.academy}}</td>
-                        <td>{{student.major}}</td>
-                        <td>
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-default btn-sm" @click="edit_form(student)">
-                            <i class="fa fa-edit"></i>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" @click="openMsgBox(student.id)">
-                            <i class="fa fa-trash-o"></i>
-                            </button>
-                        </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <el-table :data="students"  stripe>
+                    <el-table-column
+                        label="编号"
+                        type="index"
+                        width="50px">
+                    </el-table-column>
+                    <el-table-column
+                        label="账号"
+                        prop="email">
+                    </el-table-column>
+                    <el-table-column
+                        label="密码"
+                        prop="password">
+                    </el-table-column>
+                    <el-table-column
+                        label="学院"
+                        prop="academy">
+                    </el-table-column>
+                    <el-table-column
+                        label="系"
+                        prop="major">
+                    </el-table-column>
+                    <el-table-column
+                        label=""
+                        width="100px">
+                        <template slot-scope="scope">
+                            <div class="pull-right">
+                              <button type="button" class="btn btn-default btn-sm" @click="edit_form(students[scope.$index])">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-defalut btn-sm" @click="openMsgBox(students[scope.$index].id)">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
                 <el-dialog
                   :visible.sync="dialogFormVisible"
                   @close="dialogFormVisible = false">
@@ -91,12 +98,17 @@
                 </el-dialog>
             </div>
             <div class="box-footer">
+              <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" @click="refresh()"></el-button>
               <div class="block pull-right">
-                <el-pagination
-                  layout="prev, pager, next"
-                  :total="students.length" background>
-                </el-pagination>
-            </div>
+                  <el-pagination
+                    layout="prev, pager, next"
+                    :total="total" background
+                    :page-size="pageSize"
+                    @prev-click="pagination"
+                    @next-click="pagination"
+                    @current-change="pagination">
+                  </el-pagination>
+              </div>
             </div>
         </div>
     </div>
@@ -105,6 +117,7 @@
 
 <script>
 import { getMajors, getAcademies, getStudents, deleteStudent, updateStudent } from '@/api'
+import { checkschool, checksuper } from '@/utils'
 export default {
   name: 'Alumnus',
   data () {
@@ -122,6 +135,8 @@ export default {
       searchp: {},
       dialogFormVisible: false,
       total: 0,
+      offset: 0,
+      pageSize: 8,
       form: {
         email: '',
         password: '',
@@ -142,7 +157,7 @@ export default {
           trigger: ['blur', 'change']
         }],
         password: [{
-          // required: true,
+          required: true,
           message: '请输入密码',
           trigger: 'blur'
         }, {
@@ -152,7 +167,7 @@ export default {
           trigger: 'blur'
         }],
         surePwd: [{
-          // required: true,
+          required: true,
           message: '请重新输入密码',
           trigger: 'blur'
         }, {
@@ -173,6 +188,12 @@ export default {
     }
   },
   methods: {
+    setRules (flag) {
+      this.rules.password[0].required = flag
+      this.rules.surePwd[0].required = flag
+      this.rules.academyId.required = flag
+      this.rules.majorId.required = flag
+    },
     clear_form () {
       this.form.email = ''
       this.form.password = ''
@@ -182,12 +203,17 @@ export default {
       this.surePwd = ''
     },
     edit_form (params) {
+      if (!checksuper() && !checkschool()) {
+        this.$alert('对不起，您不是超级管理员')
+        return
+      }
       this.form.email = params.email
       this.form.academyId = params.academyId
       this.form.majorId = params.majorId
       this.dialogFormVisible = true
       this.editId = params.id
       this.isEdit = true
+      this.setRules(false)
     },
     async get_majors () {
       const data = await getMajors()
@@ -202,7 +228,10 @@ export default {
       }
     },
     async get_students () {
-      const data = await getStudents(this.searchp)
+      const params = this.searchp
+      params.offset = this.offset
+      params.pageSize = this.pageSize
+      const data = await getStudents(params)
       if (data.code === 0) {
         this.students = data.data.data
         this.total = data.data.total
@@ -229,6 +258,10 @@ export default {
       this.get_students()
     },
     openMsgBox (id) {
+      if (!checksuper() && !checkschool()) {
+        this.$alert('对不起，您不是超级管理员')
+        return
+      }
       this.$confirm('确定删除？', '提示')
         .then(() => {
           this.delete_student(id)
@@ -243,6 +276,20 @@ export default {
     async clear () {
       this.searchp = {}
       this.get_students()
+    },
+    pagination (cur) {
+      this.offset = (cur - 1) * this.pageSize
+      this.get_students()
+    },
+    async refresh () {
+      const params = this.searchp
+      params.offset = this.offset
+      params.pageSize = this.pageSize
+      const data = await getStudents(params)
+      if (data.code === 0) {
+        this.users = data.data
+        this.$message.success('刷新成功')
+      }
     }
   },
   mounted () {

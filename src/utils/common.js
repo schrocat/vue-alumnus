@@ -1,3 +1,4 @@
+import store from '@/store'
 export function htmlToString (str) {
   var dd = str.replace(/<\/?.+?>/g, '')
   var s = dd.replace(/ /g, '')
@@ -38,4 +39,14 @@ export function getSummary (param) {
     }
   })
   return sums
+}
+export function checksuper () {
+  // console.log(store.getters)
+  return store.getters.user.role === 8
+}
+export function checkschool () {
+  return store.getters.user.role === 6
+}
+export function checkcom () {
+  return store.getters.user.role === 7
 }

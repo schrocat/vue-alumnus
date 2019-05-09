@@ -32,11 +32,11 @@
                                         <span>{{ props.row.info }}</span>
                                     </el-form-item>
                                     <el-form-item label="联系方式">
-                                        <span>{{ props.row.phone }}</span>
+                                        <span>{{ props.row.email }}</span>
                                     </el-form-item>
-                                    <el-form-item label="联系人">
+                                    <!-- <el-form-item label="联系人">
                                         <span>{{ props.row.contact }}</span>
-                                    </el-form-item>
+                                    </el-form-item> -->
                                     <!-- <el-form-item label="证明文件">
                                       <a href="http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png" target="_blank">
                                       http://schrocat.oss-cn-shenzhen.aliyuncs.com/avatar.png
@@ -48,24 +48,28 @@
                             </template>
                             </el-table-column>
                             <el-table-column
-                            label="编号"
-                            type="index">
+                              label="编号"
+                              type="index">
+                              <template slot-scope="scope">
+                                {{scope.$index + offset + 1}}
+                              </template>
                             </el-table-column>
                             <el-table-column
-                            label="单位名称"
-                            prop="name">
+                              label="单位名称"
+                              prop="name">
                             </el-table-column>
                             <el-table-column
-                            label="工商注册号"
-                            prop="regNum">
+                              label="工商注册号"
+                              prop="regNum">
                             </el-table-column>
                             <el-table-column
-                            label="公司性质"
-                            prop="property">
+                              label="公司性质"
+                              prop="property">
                             </el-table-column>
                         </el-table>
                     </div>
                     <div class="box-footer">
+                        <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" @click="refresh()"></el-button>
                         <div class="block pull-right">
                             <el-pagination
                                 layout="prev, pager, next"
@@ -99,29 +103,24 @@
 </style>
 
 <script>
-import { company, total, deleteCompany } from '@/my'
+import { company, deleteCompany } from '@/my'
 import { insertComuser } from '@/api'
+import { Loading } from 'element-ui'
 export default {
   data () {
     return {
       tableData: [],
       total: 0,
       offset: 0,
-      pageSize: 12
+      pageSize: 11
     }
   },
   methods: {
     async getCompany () {
       const data = await company(this.offset, this.pageSize)
       if (data.code === 0) {
-        this.tableData = data.data
-        this.getTotal()
-      }
-    },
-    async getTotal () {
-      const data = await total()
-      if (data.code === 0) {
-        this.total = data.data[0].total
+        this.tableData = data.data.data
+        this.total = data.data.total
       }
     },
     async delete_company (id) {
@@ -148,7 +147,6 @@ export default {
       const data = await insertComuser(user)
       if (data.code === 0) {
         this.delete_company(params.id)
-        // this.$message.success('操作成功')
       } else {
         this.$message.warning(`操作失败：${data.msg}`)
       }
@@ -170,6 +168,18 @@ export default {
     patition (cur) {
       this.offset = (cur - 1) * this.pageSize
       this.getCompany()
+    },
+    async refresh () {
+      const loading = Loading.service({text: '刷新中'})
+      const data = await company(this.offset, this.pageSize)
+      if (data.code === 0) {
+        this.tableData = data.data.data
+        this.total = data.data.total
+        this.$message.success('刷新成功')
+      } else {
+        this.$message.warning(`刷新失败${data.msg}`)
+      }
+      loading.close()
     }
   },
   mounted () {

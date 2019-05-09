@@ -130,7 +130,7 @@ export default {
       const data = await ySalary(this.syear)
       if (data.code === 0) {
         this.cdata.rows = data.data
-        console.log(this.cdata.rows)
+        // console.log(this.cdata.rows)
       }
     },
     ratio (count) {

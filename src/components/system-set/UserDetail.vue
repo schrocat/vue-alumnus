@@ -3,61 +3,68 @@
     <div class="col-xs-12">
       <div class="box">
         <div class="box-body">
-          <table id="table" class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>编号</th>
-                <th>账号</th>
-                <th>密码</th>
-                <th>学院</th>
-                <th>系</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(user,index) in users" :key="user.id">
-                <td>{{index + 1}}</td>
-                <td>{{user.email}}</td>
-                <td>{{user.password}}</td>
-                <td>{{user.academy}}</td>
-                <td>{{user.major}}</td>
-                <td>
-                  <div class="pull-right">
-                    <button type="button" class="btn btn-default btn-sm" @click="edit_form(user)">
-                      <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-default btn-sm" @click="openbox(user.id)">
-                      <i class="fa fa-trash-o"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <el-table :data="users"  stripe>
+              <el-table-column
+                  label="编号"
+                  type="index"
+                  width="50px">
+              </el-table-column>
+              <el-table-column
+                  label="账号"
+                  prop="email">
+              </el-table-column>
+              <el-table-column
+                  label="密码"
+                  prop="password">
+              </el-table-column>
+              <el-table-column
+                  label="学院"
+                  prop="academy">
+              </el-table-column>
+              <el-table-column
+                  label="系"
+                  prop="major">
+              </el-table-column>
+              <el-table-column
+                  label=""
+                  width="100px">
+                  <template slot-scope="scope">
+                      <div class="pull-right">
+                         <button type="button" class="btn btn-default btn-sm" @click="edit_form(users[scope.$index])">
+                              <i class="fa fa-edit"></i>
+                          </button>
+                          <button type="button" class="btn btn-defalut btn-sm" @click="openbox(users[scope.$index].id)">
+                              <i class="fa fa-trash-o"></i>
+                          </button>
+                      </div>
+                  </template>
+              </el-table-column>
+          </el-table>
           <el-dialog
             title=""
             :visible.sync="dialogFormVisible"
             @close="dialogFormVisible = false">
-            <el-form :model="form" :rules="rules">
-              <el-form-item label="账号" label-width="12%" prop="email">
+            <el-form :model="form" :rules="rules" label-width="80px">
+              <el-form-item label="账号" prop="email">
                 <el-input v-model="form.email"></el-input>
               </el-form-item>
-              <el-form-item label="密码" label-width="12%" prop="password">
+              <el-form-item label="密码"  prop="password">
                 <el-input v-model="form.password"></el-input>
               </el-form-item>
-              <el-form-item label="确认密码" label-width="12%" prop="surePwd">
+              <el-form-item label="确认密码"  prop="surePwd">
                 <el-input v-model="form.surePwd" ></el-input>
               </el-form-item>
-              <el-form-item label="学院" label-width="12%" prop="academyId">
-                <el-select v-model="form.academyId" :remote="true">
+              <el-form-item label="学院" prop="academyId">
+                <el-select v-model="form.academyId">
                   <el-option v-for="academy in academies"
                     :key="academy.id"
-                    :value="academy.id"
-                    :label="academy.name">
+                    :label="academy.name"
+                    :value="academy.id">
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="系" label-width="12%" prop="majorId">
-                <el-select v-model="form.majorId" :remote="true">
+              <el-form-item label="系" prop="majorId">
+                <el-select v-model="form.majorId">
                   <el-option v-for="major in majors"
                     :key="major.id"
                     :value="major.id"
@@ -75,7 +82,7 @@
         </div>
         <div class="box-footer">
           <el-button  icon="el-icon-refresh" size="mini" style="padding:7px;margin-left:0px;" @click="refresh()"></el-button>
-          <el-button type="primary" @click="dialogFormVisible = true;isEdit = false;" plain class="pull-right" size="mini">新增管理员</el-button>
+          <el-button type="primary" @click="add" plain class="pull-right" size="mini">新增管理员</el-button>
         </div>
       </div>
     </div>
@@ -84,6 +91,7 @@
 
 <script>
 import { getAdmins, getMajors, getAcademies, updateAdmin, insertAdmin, deleteAdmin } from '@/api'
+import { checksuper } from '@/utils'
 export default {
   name: 'UserDetail',
   props: ['message'],
@@ -151,6 +159,12 @@ export default {
     }
   },
   methods: {
+    setRules (flag) {
+      this.rules.password[0].required = flag
+      this.rules.surePwd[0].required = flag
+      this.rules.academyId.required = flag
+      this.rules.majorId.required = flag
+    },
     clear_form () {
       this.form.email = ''
       this.form.password = ''
@@ -160,12 +174,17 @@ export default {
       this.surePwd = ''
     },
     edit_form (params) {
+      if (!checksuper()) {
+        this.$alert('对不起，您不是超级管理员')
+        return
+      }
+      this.setRules(false)
+      this.editId = params.id
+      this.isEdit = true
+      this.dialogFormVisible = true
       this.form.email = params.email
       this.form.academyId = params.academyId
       this.form.majorId = params.majorId
-      this.dialogFormVisible = true
-      this.editId = params.id
-      this.isEdit = true
     },
     async get_majors () {
       const data = await getMajors()
@@ -197,6 +216,7 @@ export default {
       this.get_admins()
     },
     async insert_admin () {
+      // this.setRules(true)
       if (this.hasOneBlank(this.form)) {
         this.$message.warning('账号信息不能为空')
         return
@@ -228,10 +248,24 @@ export default {
       }
     },
     openbox (id) {
+      if (!checksuper()) {
+        this.$alert('对不起，您不是超级管理员')
+        return
+      }
       this.$confirm('确定删除？', '提示')
         .then(() => {
           this.delete_admin(id)
         })
+        .catch(e => {})
+    },
+    add () {
+      if (!checksuper()) {
+        this.$alert('对不起，您不是超级管理员')
+        return
+      }
+      this.dialogFormVisible = true
+      this.isEdit = false
+      this.setRules(true)
     }
   },
   mounted () {

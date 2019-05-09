@@ -40,8 +40,10 @@
               <!-- <div class="box-header">地区分布海量图</div> -->
               <div class="box-body">
                 <baidu-map class="map" :center="{lng: 105.000, lat: 38.000}" :zoom="5">
-                    <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection>
+                    <!-- <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection> -->
                     <!-- <bml-heatmap :data="c_points" :max="100" :radius="50" :gradient="gradient"></bml-heatmap> -->
+                    <bm-marker v-for="p in c_points" :key="p.id" :position="p" :dragging="true" animation="BMAP_ANIMATION_BOUNCE">
+                    </bm-marker>
                 </baidu-map>
               </div>
             </div>
@@ -63,7 +65,6 @@ export default {
       c_points: [],
       year: null,
       total: 0
-      // gradient: {1:'rgb(0, 0, 0)',1:'rgb(255, 0, 0)'}
     }
   },
   methods: {
@@ -71,13 +72,12 @@ export default {
       const data = await workLocation(this.year)
       if (data.code === 0) {
         const d = data.data
-        const points = []
-        for (let i = 0; i < d.length; i++) {
-          const e = JSON.parse(d[i].liveLocation)
-          // e.count = d[i].count
-          points.push(e)
+        this.c_points = []
+        for (let i = 1; i <= d.length; i++) {
+          const e = JSON.parse(d[i - 1].liveLocation)
+          e.id = i
+          this.c_points.push(e)
         }
-        this.c_points = points
         console.log(this.c_points)
       }
     },
@@ -100,13 +100,13 @@ export default {
       return rs
     },
     getWork () {
-      this.getWorkLocation()
       this.getWorkPosition()
+      this.getWorkLocation()
     }
   },
   mounted () {
-    this.getWorkLocation()
     this.getWorkPosition()
+    this.getWorkLocation()
   }
 }
 </script>

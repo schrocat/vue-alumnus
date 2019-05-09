@@ -23,7 +23,7 @@
                 <li class="user-header">
                   <img :src="user.avatar" class="img-circle" alt="User Image">
                   <p style="font-size:16px">{{user.email}}</p>
-                  <p style="font-size:16px">{{user.role===8?'超级管理员':'学校管理员'}}</p>
+                  <p style="font-size:16px">{{user.role===8?'超级管理员':'管理员'}}</p>
                   <!-- <p style="font-size:16px" v-else>用户身份：学校管理员</p> -->
                 </li>
                 <li class="user-body">
@@ -31,7 +31,7 @@
                   <p>昵称:{{user.nickName?user.nickName:'连nickname都没有的人'}}</p>
                   <p>性别:{{user.gender===1?'男':'女'}}</p>
                   <p>年龄:{{user.age?user.age:'年龄是个秘密'}}</p>
-                  <p>生日:{{user.birthTime?user.birthTime:'神秘一点好'}}</p>
+                  <p>生日:{{user.birthTime?setBirthday(user.birthTime):'神秘一点好'}}</p>
                   <p>学院:{{academy}}</p>
                   <p>专业:{{major}}</p>
                   <p>个性签名:{{user.personSign?user.personSign:'这个人什么都没写...'}}</p>
@@ -96,6 +96,10 @@ export default {
       store.commit('setUser', null)
       store.commit('loginStatus', false)
       window.location.href = '/'
+    },
+    setBirthday (timestamp) {
+      const time = new Date(timestamp)
+      return time.toLocaleDateString().replace(/\//g, '-')
     }
   },
   mounted () {

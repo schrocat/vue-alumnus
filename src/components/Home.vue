@@ -35,16 +35,17 @@
                 <el-input-number v-model="formData.age"></el-input-number>
               </el-form-item>
               <el-form-item label="生日：">
-                <el-date-picker  type="date" placeholder="选择日期时间" v-model="formData.birthTime" value-format="yyyy-MM-dd">
+                <el-date-picker  type="date" placeholder="选择日期时间" v-model="formData.birthTime" value-format="timestamp">
                 </el-date-picker>
               </el-form-item>
-              <!-- <el-form-item label="院、专业：">
+              <el-form-item label="院、专业：">
                 <el-cascader
                   placeholder=""
                   filterable
-                  change-on-select>
+                  :options="options"
+                  v-model="arr">
                 </el-cascader>
-              </el-form-item> -->
+              </el-form-item>
               <el-form-item label="个性签名：">
                 <el-input type="textarea" rows="6"  placeholder="在这编写你的个性签名" v-model="formData.personSign"></el-input>
               </el-form-item>
@@ -61,12 +62,14 @@
 
 <script>
 import store from '@/store'
-import { updateUserInfo } from '@/api'
+import { updateUserInfo, getAllMajors } from '@/api'
 export default {
   data () {
     return {
       user: {},
-      formData: {}
+      formData: {},
+      options: [],
+      arr: []
     }
   },
   methods: {
@@ -78,18 +81,29 @@ export default {
       window.close()
     },
     async onSubmit () {
+      // console.log(this.arr)
+      this.formData.academyId = this.arr[0]
+      this.formData.majorId = this.arr[1]
       const data = await updateUserInfo(this.formData)
       if (data.code === 0) {
-        this.$message.success('保存成功')
+        this.$alert('保存成功')
       } else {
         this.$message.warning(`${data.msg}`)
       }
       this.closeCurWindow()
+    },
+    async setOptions () {
+      const data = await getAllMajors()
+      // console.log(data)
+      if (data.code === 0) {
+        this.options = data.data
+        // console.log(this.options)
+      }
     }
   },
   mounted () {
     this.setUser()
-    console.log(this.user)
+    this.setOptions()
   }
 }
 </script>

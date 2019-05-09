@@ -3,33 +3,41 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-body">
-                    <table id="M_table" class="table">
-                        <thead>
-                            <tr>
-                                <th>编号</th>
-                                <th>专业名</th>
-                                <th>所属院</th>
-                                <th>专业信息</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody v-for="(major, index) in majors" :key="major.id">
-                          <tr>
-                            <td style="width:5%;">{{index + 1}}</td>
-                            <td style="width:15%;">{{major.name}}</td>
-                            <td style="width:15%">{{major.academy_name}}</td>
-                            <td style="width:55%;">{{major.info}}</td>
-                            <td class="pull-right">
-                                <button type="button" class="btn btn-default btn-sm" @click="edit_info(major)">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                                <button type="button" class="btn btn-defalut btn-sm" @click="openMessageBox(major.id)">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                    </table>
+                  <el-table :data="majors"  stripe>
+                      <el-table-column
+                        label="编号"
+                        type="index"
+                        width="50px">
+                      </el-table-column>
+                      <el-table-column
+                        label="专业名"
+                        prop="name"
+                        width="150">
+                      </el-table-column>
+                      <el-table-column
+                        label="所属院"
+                        prop="academy_name"
+                        width="150">
+                      </el-table-column>
+                      <el-table-column
+                        label="院信息"
+                        prop="info">
+                      </el-table-column>
+                      <el-table-column
+                        label=""
+                        width="100px">
+                        <template slot-scope="scope">
+                          <div class="pull-right">
+                            <button type="button" class="btn btn-default btn-sm" @click="edit_info(majors[scope.$index])">
+                              <i class="fa fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-defalut btn-sm" @click="openMessageBox(majors[scope.$index].id)">
+                              <i class="fa fa-trash-o"></i>
+                            </button>
+                          </div>
+                        </template>
+                      </el-table-column>
+                    </el-table>
                     <el-dialog
                         title= " "
                         :visible.sync="dialog_visible"
@@ -39,7 +47,7 @@
                                 <el-input v-model="form.name"></el-input>
                             </el-form-item>
                             <el-form-item label="所属院">
-                                <el-select v-model="form.academyId" :remote="true">
+                                <el-select v-model="form.academyId">
                                     <el-option v-for="academy in academys"
                                         :key="academy.id"
                                         :label="academy.name"
@@ -52,7 +60,7 @@
                             </el-form-item>
                         </el-form>
                         <span slot="footer">
-                            <el-button @click="dialog_visible = false,form={}">取 消</el-button>
+                            <el-button @click="dialog_visible = false,init_form">取 消</el-button>
                             <el-button type="primary" @click="update_major" v-if="isEdit">修改</el-button>
                             <el-button type="primary" @click="post_major" v-else>确 定</el-button>
                         </span>
@@ -93,6 +101,12 @@ export default {
       this.editId = param.id
       this.form.name = param.name
       this.form.info = param.info
+      this.form.academyId = param.academyId
+    },
+    init_form () {
+      this.form.name = ''
+      this.form.academyId = ''
+      this.form.info = ''
     },
     async get_majors () {
       const data = await getMajors()
@@ -114,7 +128,7 @@ export default {
       } else {
         this.$message.warning(`错误：${data.code}:${data.msg}`)
       }
-      this.form = {}
+      this.init_form()
       this.get_majors()
     },
     async update_major () {
@@ -125,7 +139,7 @@ export default {
       } else {
         this.$message.warning(`修改失败！${data.code}:${data.msg}`)
       }
-      this.form = {}
+      this.init_form()
       this.get_majors()
     },
     async delete_major (id) {
