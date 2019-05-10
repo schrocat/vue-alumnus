@@ -42,8 +42,25 @@
                 <baidu-map class="map" :center="{lng: 105.000, lat: 38.000}" :zoom="5">
                     <!-- <bm-point-collection :points="c_points"  color="red" size="BMAP_POINT_SIZE_SMALL"></bm-point-collection> -->
                     <!-- <bml-heatmap :data="c_points" :max="100" :radius="50" :gradient="gradient"></bml-heatmap> -->
-                    <bm-marker v-for="p in c_points" :key="p.id" :position="p" :dragging="true" animation="BMAP_ANIMATION_BOUNCE">
-                    </bm-marker>
+                    <bm-marker v-for="p in c_points" :key="p.id" :position="p"></bm-marker>
+                    <!-- <bm-marker :position="{lng: 116.404, lat: 39.915}"></bm-marker>
+                    <bm-marker :position="{lng: 25.831, lat: 114.924}"></bm-marker>
+                    <bm-marker :position="{lng: 23.12, lat: 113.159 }"></bm-marker>
+                    <bm-marker :position="{lng: 24.479, lat: 118.059}"></bm-marker>
+                    <bm-marker :position="{ lng: 24.47, lat: 114.059 }"></bm-marker>
+                    <bm-marker :position="{ lng: 23.12, lat: 113.059}"></bm-marker>
+                    <bm-marker :position="{ lng: 30.25, lat: 120.05}"></bm-marker>
+                    <bm-marker :position="{lng: 23.12, lat: 113.25 }"></bm-marker>
+                    <bm-marker :position="{lng: 23.353, lat: 116.682}"></bm-marker>
+                    <bm-marker :position="{lng: 30.27, lat: 120.15}"></bm-marker>
+                    <bm-marker :position="{lng: 23.153, lat: 116.482 }"></bm-marker>
+                    <bm-marker :position="{lng: 23.12, lat: 113.25}"></bm-marker>
+                    <bm-marker :position="{lng: 23.02, lat: 113.15}"></bm-marker>
+                    <bm-marker :position="{lng: 23.143, lat: 116.472}"></bm-marker>
+                    <bm-marker :position="{lng: 30.27, lat: 120.15}"></bm-marker>
+                    <bm-marker :position="{lng: 23.153, lat: 116.482}"></bm-marker>
+                    <bm-marker :position="{lng: 22.532, lat: 114.059}"></bm-marker>
+                    <bm-marker :position=" {lng: 22.522, lat: 114.059 }"></bm-marker> -->
                 </baidu-map>
               </div>
             </div>
@@ -78,7 +95,6 @@ export default {
           e.id = i
           this.c_points.push(e)
         }
-        console.log(this.c_points)
       }
     },
     async getWorkPosition () {

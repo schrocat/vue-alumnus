@@ -49,10 +49,10 @@
                 <el-input v-model="form.email"></el-input>
               </el-form-item>
               <el-form-item label="密码"  prop="password">
-                <el-input v-model="form.password"></el-input>
+                <el-input v-model="form.password" show-password></el-input>
               </el-form-item>
               <el-form-item label="确认密码"  prop="surePwd">
-                <el-input v-model="form.surePwd" ></el-input>
+                <el-input v-model="form.surePwd" show-password></el-input>
               </el-form-item>
               <el-form-item label="学院" prop="academyId">
                 <el-select v-model="form.academyId">
@@ -217,10 +217,10 @@ export default {
     },
     async insert_admin () {
       // this.setRules(true)
-      if (this.hasOneBlank(this.form)) {
-        this.$message.warning('账号信息不能为空')
-        return
-      }
+      // if (this.hasOneBlank(this.form)) {
+      //   this.$message.warning('账号信息不能为空')
+      //   return
+      // }
       this.dialogFormVisible = false
       const data = await insertAdmin(this.form)
       if (data.code === 0) {

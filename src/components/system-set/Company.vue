@@ -170,6 +170,7 @@ export default {
       this.init_form()
     },
     async update_comuser () {
+      console.log(this.form)
       const data = await updateComuser(this.editId, this.form)
       if (data.code === 0) {
         this.$message.success('更新成功')
@@ -208,6 +209,7 @@ export default {
         return
       }
       this.setRules(false)
+      // console.log(params)
       this.form.email = params.email
       this.form.company.name = params.company
       this.editId = params.id
@@ -245,6 +247,7 @@ export default {
       }
       this.setRules(true)
       this.init_form()
+      this.isEdit = false
       this.dialog_visible = true
     }
   },
